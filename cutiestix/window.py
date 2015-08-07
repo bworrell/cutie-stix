@@ -17,7 +17,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self._init_models()
         self._populate()
         self._connect_ui()
 
@@ -26,10 +25,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _populate(self):
         self.tab_widget.removeTab(1)
-
-    def _init_models(self):
-        self.model_table_files = models.ValidateTableModel(self)
-        self.table_files.setModel(self.model_table_files)
 
     def _connect_ui(self):
         # Buttons in the main window
@@ -52,3 +47,4 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot()
     def _handle_btn_clear_clicked(self):
         LOG.debug("handle_btn_clear_clicked()")
+        self.table_files.clear()

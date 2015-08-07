@@ -130,8 +130,8 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
 
 
 class ValidateTableModel(QtCore.QAbstractTableModel):
-    COL_NAMES = ("Filename", "STIX Version", "XML Schema", "Best Practices",
-                 "STIX Profile")
+    COL_NAMES = ("Filename", "STIX Version", "XML Schema Validate",
+                 "Best Practices Validate", "STIX Profile Validate")
     COL_INDEXES = dict(enumerate(COL_NAMES))
 
     def __init__(self, parent):

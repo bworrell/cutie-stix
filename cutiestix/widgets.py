@@ -40,21 +40,29 @@ class FilesTableView(QtGui.QTableView):
         self._init_menus()
         self._init_headers()
         self._init_delegates()
-        self.resizeColumnsToContents()
+        self._init_models()
+        self._connect_signals()
 
     def _init_headers(self):
-        v_header = self.verticalHeader()
         h_header = self.horizontalHeader()
+        h_header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
         h_header.setStretchLastSection(True)
 
-    def show_menu(self, pos):
+    def _init_models(self):
+        self.source_model = models.ValidateTableModel(self)
+        self.setModel(self.source_model)
+
+    def _connect_signals(self):
+        model = self.source_model
+        model.modelReset.connect(self.resizeColumnsToContents)
+
+    def _show_menu(self, pos):
         pos = self.viewport().mapToGlobal(pos)
         self.menu.popup(pos)
 
-
     def _init_menus(self):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.show_menu)
+        self.customContextMenuRequested.connect(self._show_menu)
 
         self.menu = QtGui.QMenu(self)
         self.action_foo = self.menu.addAction("Foo")
@@ -64,6 +72,9 @@ class FilesTableView(QtGui.QTableView):
         self.setItemDelegateForColumn(2, BoolEditableDelegate(self))
         self.setItemDelegateForColumn(3, BoolEditableDelegate(self))
         self.setItemDelegateForColumn(4, BoolEditableDelegate(self))
+
+    def clear(self):
+        self.source_model.clear()
 
     # Dragging files into the view doesn't work because of:
     # https://bugreports.qt.io/browse/QTBUG-40449
