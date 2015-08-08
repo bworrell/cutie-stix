@@ -1,4 +1,5 @@
 """View delegates."""
+
 import logging
 
 from PyQt4 import QtGui

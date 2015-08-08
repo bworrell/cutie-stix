@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qtui/mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Fri Aug  7 18:28:32 2015
+# Created: Fri Aug  7 19:59:07 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,14 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1062, 728)
+        MainWindow.setStyleSheet(_fromUtf8("QLabel[notification=\"major\"] {\n"
+"    font: 28pt \"Helvetica\";\n"
+"    font-weight: bold;\n"
+"    qproperty-alignment: AlignCenter;\n"
+"    border: 8px solid black;\n"
+"    border-radius: 15px;\n"
+"}\n"
+""))
         self.main_widget = QtGui.QWidget(MainWindow)
         self.main_widget.setObjectName(_fromUtf8("main_widget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.main_widget)
@@ -42,7 +50,6 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tab_widget.sizePolicy().hasHeightForWidth())
         self.tab_widget.setSizePolicy(sizePolicy)
         self.tab_widget.setTabPosition(QtGui.QTabWidget.North)
-        self.tab_widget.setTabShape(QtGui.QTabWidget.Rounded)
         self.tab_widget.setElideMode(QtCore.Qt.ElideRight)
         self.tab_widget.setDocumentMode(False)
         self.tab_widget.setTabsClosable(False)
@@ -54,9 +61,55 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tab_files.sizePolicy().hasHeightForWidth())
         self.tab_files.setSizePolicy(sizePolicy)
         self.tab_files.setObjectName(_fromUtf8("tab_files"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.tab_files)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.tab_files)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.stacked_main = QtGui.QStackedWidget(self.tab_files)
+        self.stacked_main.setMinimumSize(QtCore.QSize(100, 100))
+        self.stacked_main.setObjectName(_fromUtf8("stacked_main"))
+        self.page_add_files = QtGui.QWidget()
+        self.page_add_files.setObjectName(_fromUtf8("page_add_files"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.page_add_files)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setContentsMargins(0, -1, 0, -1)
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem)
+        self.verticalLayout_4 = QtGui.QVBoxLayout()
+        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem1)
+        self.label = QtGui.QLabel(self.page_add_files)
+        self.label.setMinimumSize(QtCore.QSize(0, 50))
+        self.label.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.label.setProperty("notification", _fromUtf8("major"))
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout_4.addWidget(self.label)
+        self.widget_add_files = QtGui.QWidget(self.page_add_files)
+        self.widget_add_files.setMinimumSize(QtCore.QSize(250, 310))
+        self.widget_add_files.setMaximumSize(QtCore.QSize(286, 433))
+        self.widget_add_files.setStyleSheet(_fromUtf8("image: url(:/images/addfile.png);\n"
+"position: center center;"))
+        self.widget_add_files.setObjectName(_fromUtf8("widget_add_files"))
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.widget_add_files)
+        self.horizontalLayout_5.setMargin(0)
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.verticalLayout_4.addWidget(self.widget_add_files)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem2)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_4)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem3)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+        self.stacked_main.addWidget(self.page_add_files)
+        self.page_validate = QtGui.QWidget()
+        self.page_validate.setObjectName(_fromUtf8("page_validate"))
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.page_validate)
+        self.horizontalLayout_3.setMargin(0)
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.group_files = QtGui.QGroupBox(self.tab_files)
+        self.group_files = QtGui.QGroupBox(self.page_validate)
         self.group_files.setObjectName(_fromUtf8("group_files"))
         self.verticalLayout = QtGui.QVBoxLayout(self.group_files)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -69,12 +122,12 @@ class Ui_MainWindow(object):
         self.table_files.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
         self.table_files.setAlternatingRowColors(True)
         self.table_files.setObjectName(_fromUtf8("table_files"))
-        self.table_files.horizontalHeader().setVisible(True)
+        self.table_files.horizontalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.table_files)
         self.horizontalLayout.addWidget(self.group_files)
         self.v_layout_right = QtGui.QVBoxLayout()
         self.v_layout_right.setObjectName(_fromUtf8("v_layout_right"))
-        self.groupBox = QtGui.QGroupBox(self.tab_files)
+        self.groupBox = QtGui.QGroupBox(self.page_validate)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.formLayout_2 = QtGui.QFormLayout(self.groupBox)
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
@@ -88,7 +141,7 @@ class Ui_MainWindow(object):
         self.btn_clear.setObjectName(_fromUtf8("btn_clear"))
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.SpanningRole, self.btn_clear)
         self.v_layout_right.addWidget(self.groupBox)
-        self.group_options = QtGui.QGroupBox(self.tab_files)
+        self.group_options = QtGui.QGroupBox(self.page_validate)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -108,6 +161,9 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(1, QtGui.QFormLayout.SpanningRole, self.check_profile)
         self.v_layout_right.addWidget(self.group_options)
         self.horizontalLayout.addLayout(self.v_layout_right)
+        self.horizontalLayout_3.addLayout(self.horizontalLayout)
+        self.stacked_main.addWidget(self.page_validate)
+        self.horizontalLayout_2.addWidget(self.stacked_main)
         self.tab_widget.addTab(self.tab_files, _fromUtf8(""))
         self.tab_remove = QtGui.QWidget()
         self.tab_remove.setEnabled(False)
@@ -168,10 +224,12 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab_widget.setCurrentIndex(0)
+        self.stacked_main.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "STIX Document Validator", None))
+        self.label.setText(_translate("MainWindow", "Add Files...", None))
         self.group_files.setTitle(_translate("MainWindow", "Validate Files", None))
         self.groupBox.setTitle(_translate("MainWindow", "Actions", None))
         self.btn_validate.setText(_translate("MainWindow", "Validate", None))
@@ -200,3 +258,4 @@ class Ui_MainWindow(object):
         self.action_disable_all_best_practice.setText(_translate("MainWindow", "Disable All", None))
 
 from cutiestix.widgets import FilesTableView
+import images_rc

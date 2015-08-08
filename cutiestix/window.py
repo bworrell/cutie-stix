@@ -5,8 +5,8 @@ import logging
 from PyQt4 import QtGui, QtCore
 
 # internal
+from . import version
 from . import widgets
-from . import models
 from .ui.window import Ui_MainWindow
 
 
@@ -25,6 +25,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _populate(self):
         self.tab_widget.removeTab(1)
+
+        title = "STIX Document Validator v%s" % (version.__version__)
+        self.setWindowTitle(title)
 
     def _connect_ui(self):
         # Buttons in the main window

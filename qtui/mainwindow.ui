@@ -13,6 +13,16 @@
   <property name="windowTitle">
    <string>STIX Document Validator</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel[notification=&quot;major&quot;] {
+	font: 28pt &quot;Helvetica&quot;;
+	font-weight: bold;
+	qproperty-alignment: AlignCenter;
+	border: 8px solid black;
+	border-radius: 15px;
+}
+</string>
+  </property>
   <widget class="QWidget" name="main_widget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -33,9 +43,6 @@
         </property>
         <property name="tabPosition">
          <enum>QTabWidget::North</enum>
-        </property>
-        <property name="tabShape">
-         <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
          <number>0</number>
@@ -59,114 +66,251 @@
          <attribute name="title">
           <string>Documents</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QGroupBox" name="group_files">
-            <property name="title">
-             <string>Validate Files</string>
+           <widget class="QStackedWidget" name="stacked_main">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>100</height>
+             </size>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <widget class="FilesTableView" name="table_files">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="dragDropMode">
-                <enum>QAbstractItemView::DropOnly</enum>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
-              </widget>
-             </item>
-            </layout>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="page_add_files">
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <spacer name="verticalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Add Files...</string>
+                    </property>
+                    <property name="notification" stdset="0">
+                     <string notr="true">major</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="widget_add_files" native="true">
+                    <property name="minimumSize">
+                     <size>
+                      <width>250</width>
+                      <height>310</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>286</width>
+                      <height>433</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">image: url(:/images/addfile.png);
+position: center center;</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_validate">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QGroupBox" name="group_files">
+                  <property name="title">
+                   <string>Validate Files</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout">
+                   <item>
+                    <widget class="FilesTableView" name="table_files">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="dragDropMode">
+                      <enum>QAbstractItemView::DropOnly</enum>
+                     </property>
+                     <property name="alternatingRowColors">
+                      <bool>true</bool>
+                     </property>
+                     <attribute name="horizontalHeaderVisible">
+                      <bool>false</bool>
+                     </attribute>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="v_layout_right">
+                  <item>
+                   <widget class="QGroupBox" name="groupBox">
+                    <property name="title">
+                     <string>Actions</string>
+                    </property>
+                    <layout class="QFormLayout" name="formLayout_2">
+                     <item row="0" column="0" colspan="2">
+                      <widget class="QPushButton" name="btn_validate">
+                       <property name="text">
+                        <string>Validate</string>
+                       </property>
+                       <property name="autoDefault">
+                        <bool>false</bool>
+                       </property>
+                       <property name="default">
+                        <bool>false</bool>
+                       </property>
+                       <property name="flat">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0" colspan="2">
+                      <widget class="QPushButton" name="btn_clear">
+                       <property name="text">
+                        <string>Clear Files</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="group_options">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>190</width>
+                      <height>200</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>50</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="title">
+                     <string>Options</string>
+                    </property>
+                    <layout class="QFormLayout" name="formLayout">
+                     <property name="fieldGrowthPolicy">
+                      <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+                     </property>
+                     <item row="0" column="0" colspan="2">
+                      <widget class="QCheckBox" name="check_best_practices">
+                       <property name="text">
+                        <string>Validate Best Practices</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0" colspan="2">
+                      <widget class="QCheckBox" name="check_profile">
+                       <property name="text">
+                        <string>Valdiate STIX Profile</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="v_layout_right">
-            <item>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string>Actions</string>
-              </property>
-              <layout class="QFormLayout" name="formLayout_2">
-               <item row="0" column="0" colspan="2">
-                <widget class="QPushButton" name="btn_validate">
-                 <property name="text">
-                  <string>Validate</string>
-                 </property>
-                 <property name="autoDefault">
-                  <bool>false</bool>
-                 </property>
-                 <property name="default">
-                  <bool>false</bool>
-                 </property>
-                 <property name="flat">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QPushButton" name="btn_clear">
-                 <property name="text">
-                  <string>Clear Files</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="group_options">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>190</width>
-                <height>200</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="title">
-               <string>Options</string>
-              </property>
-              <layout class="QFormLayout" name="formLayout">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::FieldsStayAtSizeHint</enum>
-               </property>
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="check_best_practices">
-                 <property name="text">
-                  <string>Validate Best Practices</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QCheckBox" name="check_profile">
-                 <property name="text">
-                  <string>Valdiate STIX Profile</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
@@ -296,6 +440,8 @@
    <header>cutiestix/widgets.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
