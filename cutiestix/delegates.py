@@ -19,7 +19,8 @@ class BoolEditableDelegate(QtGui.QStyledItemDelegate):
     def setEditorData(self, widget, index):
         value = index.model().data(index, Qt.EditRole)
         bool  = utils.str2bool(value)
-        widget.setCurrentIndex(int(bool))
+        idx   = 0 if bool else 1
+        widget.setCurrentIndex(idx)
 
     def createEditor(self, parent, option, index):
         from .widgets import BoolComboBox  # circular import

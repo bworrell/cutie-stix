@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'qtui/mainwindow.ui'
 #
-# Created: Fri Aug  7 19:59:07 2015
+# Created: Sat Aug  8 16:29:22 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1062, 728)
+        MainWindow.resize(1158, 728)
         MainWindow.setStyleSheet(_fromUtf8("QLabel[notification=\"major\"] {\n"
 "    font: 28pt \"Helvetica\";\n"
 "    font-weight: bold;\n"
@@ -119,35 +119,40 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.table_files.sizePolicy().hasHeightForWidth())
         self.table_files.setSizePolicy(sizePolicy)
+        self.table_files.setFrameShadow(QtGui.QFrame.Plain)
+        self.table_files.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.table_files.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_files.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
-        self.table_files.setAlternatingRowColors(True)
         self.table_files.setObjectName(_fromUtf8("table_files"))
-        self.table_files.horizontalHeader().setVisible(False)
+        self.table_files.horizontalHeader().setVisible(True)
         self.verticalLayout.addWidget(self.table_files)
         self.horizontalLayout.addWidget(self.group_files)
         self.v_layout_right = QtGui.QVBoxLayout()
+        self.v_layout_right.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
+        self.v_layout_right.setContentsMargins(-1, -1, -1, 0)
         self.v_layout_right.setObjectName(_fromUtf8("v_layout_right"))
-        self.groupBox = QtGui.QGroupBox(self.page_validate)
-        self.groupBox.setObjectName(_fromUtf8("groupBox"))
-        self.formLayout_2 = QtGui.QFormLayout(self.groupBox)
+        self.group_actions = QtGui.QGroupBox(self.page_validate)
+        self.group_actions.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.group_actions.setObjectName(_fromUtf8("group_actions"))
+        self.formLayout_2 = QtGui.QFormLayout(self.group_actions)
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
-        self.btn_validate = QtGui.QPushButton(self.groupBox)
+        self.btn_validate = QtGui.QPushButton(self.group_actions)
         self.btn_validate.setAutoDefault(False)
         self.btn_validate.setDefault(False)
         self.btn_validate.setFlat(False)
         self.btn_validate.setObjectName(_fromUtf8("btn_validate"))
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.SpanningRole, self.btn_validate)
-        self.btn_clear = QtGui.QPushButton(self.groupBox)
+        self.btn_clear = QtGui.QPushButton(self.group_actions)
         self.btn_clear.setObjectName(_fromUtf8("btn_clear"))
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.SpanningRole, self.btn_clear)
-        self.v_layout_right.addWidget(self.groupBox)
+        self.v_layout_right.addWidget(self.group_actions)
         self.group_options = QtGui.QGroupBox(self.page_validate)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.group_options.sizePolicy().hasHeightForWidth())
         self.group_options.setSizePolicy(sizePolicy)
-        self.group_options.setMinimumSize(QtCore.QSize(190, 200))
+        self.group_options.setMinimumSize(QtCore.QSize(200, 200))
         self.group_options.setMaximumSize(QtCore.QSize(50, 16777215))
         self.group_options.setObjectName(_fromUtf8("group_options"))
         self.formLayout = QtGui.QFormLayout(self.group_options)
@@ -160,6 +165,16 @@ class Ui_MainWindow(object):
         self.check_profile.setObjectName(_fromUtf8("check_profile"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.SpanningRole, self.check_profile)
         self.v_layout_right.addWidget(self.group_options)
+        self.progress_validation = QtGui.QProgressBar(self.page_validate)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.progress_validation.sizePolicy().hasHeightForWidth())
+        self.progress_validation.setSizePolicy(sizePolicy)
+        self.progress_validation.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.progress_validation.setProperty("value", 0)
+        self.progress_validation.setObjectName(_fromUtf8("progress_validation"))
+        self.v_layout_right.addWidget(self.progress_validation)
         self.horizontalLayout.addLayout(self.v_layout_right)
         self.horizontalLayout_3.addLayout(self.horizontalLayout)
         self.stacked_main.addWidget(self.page_validate)
@@ -173,7 +188,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.h_layout_main)
         MainWindow.setCentralWidget(self.main_widget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1062, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1158, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menu_stix_validator = QtGui.QMenu(self.menubar)
         self.menu_stix_validator.setObjectName(_fromUtf8("menu_stix_validator"))
@@ -224,14 +239,14 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab_widget.setCurrentIndex(0)
-        self.stacked_main.setCurrentIndex(0)
+        self.stacked_main.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "STIX Document Validator", None))
         self.label.setText(_translate("MainWindow", "Add Files...", None))
         self.group_files.setTitle(_translate("MainWindow", "Validate Files", None))
-        self.groupBox.setTitle(_translate("MainWindow", "Actions", None))
+        self.group_actions.setTitle(_translate("MainWindow", "Actions", None))
         self.btn_validate.setText(_translate("MainWindow", "Validate", None))
         self.btn_clear.setText(_translate("MainWindow", "Clear Files", None))
         self.group_options.setTitle(_translate("MainWindow", "Options", None))

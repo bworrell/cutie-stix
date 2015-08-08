@@ -4,7 +4,7 @@ import collections
 import logging
 
 # external
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import Qt
 
 # internal
@@ -13,6 +13,17 @@ from . import settings
 
 
 LOG = logging.getLogger(__name__)
+
+# Validation statuses
+STATUS_UNKNOWN               = 0x0
+STATUS_VALID                 = 0x1
+STATUS_XML_INVALID           = 0x2
+STATUS_BEST_PRACTICE_INVALID = 0x4
+STATUS_PROFILE_INVALID       = 0X8
+
+# Validation status colors
+STATUS_VALID                 = QtGui.QColor()
+
 
 
 class IndexedModelItem(object):
@@ -39,9 +50,18 @@ BestPracticeTableItem = collections.namedtuple(
 )
 
 
+class ValidationResults(object):
+    __slots__ = ("xml", "best_practices", "profile")
+
+    def __init__(self):
+        self.xml = None
+        self.best_practices = None
+        self.profile = None
+
+
 class ValidateTableItem(IndexedModelItem):
     __slots__ = ("filename", "stix_version", "validate_xml",
-                 "validate_stix_profile", "validate_best_practices")
+                 "validate_best_practices", "validate_stix_profile", "results")
 
     def __init__(self):
         super(ValidateTableItem, self).__init__(
@@ -49,7 +69,8 @@ class ValidateTableItem(IndexedModelItem):
             stix_version=None,
             validate_xml=settings.VALIDATE_XML,
             validate_stix_profile=settings.VALIDATE_STIX_PROFILE,
-            validate_best_practices=settings.VALIDATE_STIX_BEST_PRACTICES
+            validate_best_practices=settings.VALIDATE_STIX_BEST_PRACTICES,
+            results=None
         )
 
     @classmethod
@@ -130,9 +151,9 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
 
 
 class ValidateTableModel(QtCore.QAbstractTableModel):
-    COL_NAMES = ("Filename", "STIX Version", "XML Schema Validate",
-                 "Best Practices Validate", "STIX Profile Validate")
-    COL_INDEXES = dict(enumerate(COL_NAMES))
+    COLUMNS = ("Filename", "STIX Version", "XML Schema Validate",
+               "Best Practices Validate", "STIX Profile Validate")
+    COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
     def __init__(self, parent):
         super(ValidateTableModel, self).__init__(parent)
@@ -145,28 +166,21 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         self.endResetModel()
 
     def update(self, files):
-        if not files:
-            item = ValidateTableItem()
-            item.filename = "hi"
-            item.stix_version = "1.0"
-            self._data = [item]
-            return
-
         self.beginResetModel()
         self._data = [ValidateTableItem.from_file(fn) for fn in files]
         self.endResetModel()
 
-    def add(self, item):
+    def add(self, file):
         idx = len(self._data)
         self.beginInsertRows(QtCore.QModelIndex(), idx, idx)
-        self._data.append(item)
+        self._data.append(ValidateTableItem.from_file(file))
         self.endInsertRows()
 
     def rowCount(self, index=None):
         return len(self._data)
 
     def columnCount(self, index=None):
-        return len(self.COL_NAMES)
+        return len(self.COLUMNS)
 
     def data(self, index, role=None):
         if not index.isValid():
@@ -184,9 +198,11 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 
     def flags(self, index):
         flags = super(ValidateTableModel, self).flags(index)
-        col = index.column()
 
-        if col in (2,3,4):
+        if not index.isValid():
+            return flags
+
+        if index.column() in (2,3,4):
             flags |= Qt.ItemIsEditable
 
         return flags
@@ -216,14 +232,19 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 
         return False
 
-    def headerData(self, column, orientation, int_role=None):
-        if int_role != Qt.DisplayRole:
+    def headerData(self, column, orientation, role=None):
+        if role != Qt.DisplayRole:
             return None
 
         if orientation == Qt.Horizontal:
-            return self.COL_INDEXES[column]
+            return self.COLUMN_INDEXES[column]
         elif orientation == Qt.Vertical:
             return column + 1
+
+        return None
+
+    def items(self):
+        return self._data
 
 
 class BoolListModel(QtCore.QAbstractListModel):
@@ -231,7 +252,7 @@ class BoolListModel(QtCore.QAbstractListModel):
         super(BoolListModel, self).__init__(parent)
         self._data = ("True", "False")
 
-    def rowCount(self, index):
+    def rowCount(self, index=None):
         return 2
 
     def data(self, index, role=None):

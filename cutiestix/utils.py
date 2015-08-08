@@ -2,6 +2,7 @@
 import os.path
 
 # stix-validator
+import sdv.utils
 import sdv.validators.stix.common as stix_utils
 
 
@@ -49,3 +50,15 @@ def str2bool(s):
 def home():
     """Return the path to the home directory of the current user."""
     return os.path.expanduser("~")  # TODO: Make sure this works on Windows
+
+
+def is_stix(fn):
+    """Attempts to determine if the input `doc` is a STIX XML instance document.
+    If the root-level element falls under a namespace which starts with
+    ``http://stix.mitre.org``, this will return True.
+
+    """
+    try:
+        return sdv.utils.is_stix(fn)
+    except Exception:
+        return False

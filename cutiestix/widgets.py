@@ -37,24 +37,27 @@ class FilesTableView(QtGui.QTableView):
     def __init__(self, parent):
         LOG.debug("FilesTableView.__init__()")
         super(FilesTableView, self).__init__(parent)
-        self._init_menus()
-        self._init_headers()
-        self._init_delegates()
         self._init_models()
+        self._init_menus()
+        self._init_delegates()
+        self._init_headers()
         self._connect_signals()
+        self.setAlternatingRowColors(True)
 
     def _init_headers(self):
         h_header = self.horizontalHeader()
-        h_header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        h_header.setResizeMode(QtGui.QHeaderView.Interactive)
         h_header.setStretchLastSection(True)
 
     def _init_models(self):
         self.source_model = models.ValidateTableModel(self)
         self.setModel(self.source_model)
+        self.resizeColumnsToContents()
 
     def _connect_signals(self):
         model = self.source_model
         model.modelReset.connect(self.resizeColumnsToContents)
+        model.rowsInserted.connect(self.resizeColumnsToContents)
 
     def _show_menu(self, pos):
         pos = self.viewport().mapToGlobal(pos)

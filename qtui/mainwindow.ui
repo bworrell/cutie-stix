@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1062</width>
+    <width>1158</width>
     <height>728</height>
    </rect>
   </property>
@@ -76,7 +76,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="page_add_files">
              <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -212,14 +212,20 @@ position: center center;</string>
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
+                     </property>
+                     <property name="verticalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOn</enum>
+                     </property>
+                     <property name="horizontalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAsNeeded</enum>
+                     </property>
                      <property name="dragDropMode">
                       <enum>QAbstractItemView::DropOnly</enum>
                      </property>
-                     <property name="alternatingRowColors">
-                      <bool>true</bool>
-                     </property>
                      <attribute name="horizontalHeaderVisible">
-                      <bool>false</bool>
+                      <bool>true</bool>
                      </attribute>
                     </widget>
                    </item>
@@ -228,8 +234,20 @@ position: center center;</string>
                 </item>
                 <item>
                  <layout class="QVBoxLayout" name="v_layout_right">
+                  <property name="sizeConstraint">
+                   <enum>QLayout::SetMaximumSize</enum>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
                   <item>
-                   <widget class="QGroupBox" name="groupBox">
+                   <widget class="QGroupBox" name="group_actions">
+                    <property name="maximumSize">
+                     <size>
+                      <width>200</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
                     <property name="title">
                      <string>Actions</string>
                     </property>
@@ -270,7 +288,7 @@ position: center center;</string>
                     </property>
                     <property name="minimumSize">
                      <size>
-                      <width>190</width>
+                      <width>200</width>
                       <height>200</height>
                      </size>
                     </property>
@@ -304,6 +322,25 @@ position: center center;</string>
                     </layout>
                    </widget>
                   </item>
+                  <item>
+                   <widget class="QProgressBar" name="progress_validation">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>200</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
                 </item>
                </layout>
@@ -333,7 +370,7 @@ position: center center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1062</width>
+     <width>1158</width>
      <height>22</height>
     </rect>
    </property>
