@@ -127,7 +127,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.worker.SIGNAL_FINISHED.connect(self.thread.quit)
 
         # Start the thread
-        LOG.info("Main executing in thread %d", QtCore.QThread.currentThreadId())
+        LOG.debug("Main executing in thread %d", QtCore.QThread.currentThreadId())
         self.worker.moveToThread(self.thread)
         self.thread.start()
 

@@ -51,7 +51,7 @@ class ValidationWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def validate(self):
         LOG.debug("Validating %d docuemnts", len(self._tasks))
-        LOG.info("Worker executing in thread %d", QtCore.QThread.currentThreadId())
+        LOG.debug("Worker executing in thread %d", QtCore.QThread.currentThreadId())
         total = len(self._tasks)
 
         for idx, item in enumerate(self._tasks, start=1):
