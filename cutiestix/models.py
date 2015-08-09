@@ -29,7 +29,28 @@ VALIDATION_COLORS = {
             'fg': QtGui.QColor(Qt.white),
             'bg': QtGui.QColor(Qt.magenta)
         }
-    }
+    },
+    'best_practices': {
+        True: {
+            'fg': QtGui.QColor(Qt.darkBlue),
+            'bg': QtGui.QColor(Qt.cyan)
+        },
+        False: {
+            'fg': QtGui.QColor(Qt.white),
+            'bg': QtGui.QColor(Qt.darkMagenta)
+        }
+    },
+     'profile': {
+        True: {
+            'fg': QtGui.QColor(Qt.darkBlue),
+            'bg': QtGui.QColor(Qt.cyan)
+        },
+        False: {
+            'fg': QtGui.QColor(Qt.white),
+            'bg': QtGui.QColor(Qt.darkRed)
+        }
+    },
+
 }
 
 
@@ -232,31 +253,36 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
     def columnCount(self, index=None):
         return len(self.COLUMNS)
 
-    def _bgcolor(self, index):
+
+    def _color(self, index, key):
         row  = index.row()
+        col  = index.column()
         item = self._data[row]
 
         if not item.results:
             return None
 
+        xml = item.results.xml
+        best_practices = item.results.best_practices
+        profile = item.results.profile
+
         if isinstance(item.results, Exception):
-            return VALIDATION_COLORS['exception']['bg']
+            return VALIDATION_COLORS["exception"][key]
+        elif col == 3 and best_practices:
+            is_valid = best_practices.is_valid
+            return VALIDATION_COLORS["best_practices"][is_valid][key]
+        elif col == 4 and profile:
+            is_valid = profile.is_valid
+            return VALIDATION_COLORS["profile"][is_valid][key]
         else:
-            is_valid = item.results.xml.is_valid
-            return VALIDATION_COLORS['xml'][is_valid]['bg']
+            is_valid = xml.is_valid
+            return VALIDATION_COLORS["xml"][is_valid][key]
+
+    def _bgcolor(self, index):
+        return self._color(index, "bg")
 
     def _fgcolor(self, index):
-        row  = index.row()
-        item = self._data[row]
-
-        if not item.results:
-            return None
-
-        if isinstance(item.results, Exception):
-            return VALIDATION_COLORS['exception']['fg']
-        else:
-            is_valid = item.results.xml.is_valid
-            return VALIDATION_COLORS['xml'][is_valid]['fg']
+        return self._color(index, "fg")
 
     def data(self, index, role=None):
         if not index.isValid():
