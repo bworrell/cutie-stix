@@ -4,6 +4,7 @@ import logging
 
 # external
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
 
 # internal
 from . import version
@@ -56,6 +57,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         model.rowsInserted.connect(self._handle_file_table_model_changed)
         model.rowsRemoved.connect(self._handle_file_table_model_changed)
 
+        # Main Options
+        bpstate = self.check_best_practices.stateChanged
+        bpstate.connect(self._handle_check_best_practices_state_changed)
+
     @QtCore.pyqtSlot()
     def _handle_file_table_model_changed(self):
         model = self.table_files.source_model
@@ -93,6 +98,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         filenames = [str(f) for f in files]
         self._add_files(filenames)
+
+    @QtCore.pyqtSlot(int)
+    def _handle_check_best_practices_state_changed(self, state):
+        model  = self.table_files.source_model
+
+        if state == Qt.Checked:
+            model.enable_best_practices(True)
+        elif state == Qt.Unchecked:
+            model.enable_best_practices(False)
+        else:
+           pass
 
     @QtCore.pyqtSlot(str)
     def _handle_validating(self, fn):

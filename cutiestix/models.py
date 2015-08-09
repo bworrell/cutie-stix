@@ -319,7 +319,11 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         if not index.isValid():
             return flags
 
-        if index.column() in (2, 3):
+        col = index.column()
+
+        if col == 2:
+            flags |= Qt.ItemIsEditable
+        elif col == 3 and settings.STIX_PROFILE_FILENAME:
             flags |= Qt.ItemIsEditable
 
         return flags
@@ -389,6 +393,14 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         idx   = next(x for x, item in enumerate(items) if item.key() == itemid)
         start = self.index(idx, 0)
         end   = self.index(idx, len(self.COLUMNS))
+        self.dataChanged.emit(start, end)
+
+    def enable_best_practices(self, enabled=True):
+        for item in self._data:
+            item.validate_best_practices = enabled
+
+        start = self.index(0, self.columnCount())
+        end   = self.index(self.rowCount(), self.columnCount())
         self.dataChanged.emit(start, end)
 
 
