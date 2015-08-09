@@ -16,9 +16,10 @@ LOG = logging.getLogger(__name__)
 
 
 class ValidationWorker(QtCore.QObject):
-    SIGNAL_VALIDATED = QtCore.pyqtSignal(int, float)
-    SIGNAL_FINISHED  = QtCore.pyqtSignal()
-    SIGNAL_EXCEPTION = QtCore.pyqtSignal(str)
+    SIGNAL_VALIDATING  = QtCore.pyqtSignal(str)
+    SIGNAL_VALIDATED   = QtCore.pyqtSignal(int, float)
+    SIGNAL_FINISHED    = QtCore.pyqtSignal()
+    SIGNAL_EXCEPTION   = QtCore.pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(ValidationWorker, self).__init__(parent)
@@ -40,6 +41,11 @@ class ValidationWorker(QtCore.QObject):
         # Always run XML validation
         result.xml = sdv.validate_xml(doc=fn, schemas=schemas, version=version)
 
+        # If the file was XML invalid, don't bother running the other
+        # validation scenarios.
+        if not result.xml.is_valid:
+            return result
+
         if item.validate_stix_profile:
             result.profile = sdv.validate_profile(doc=fn, profile=profile)
 
@@ -56,6 +62,7 @@ class ValidationWorker(QtCore.QObject):
 
         for idx, item in enumerate(self._tasks, start=1):
             LOG.debug("Running task %s", id(item))
+            self.SIGNAL_VALIDATING.emit(item.filename)
 
             try:
                 results = self._validate_item(item)

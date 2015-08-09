@@ -1,4 +1,5 @@
 # builtin
+import os
 import logging
 
 # external
@@ -36,7 +37,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def _populate(self):
         self.tab_widget.removeTab(1)
-        self.stacked_main.setCurrentIndex(INDEX_ADD_FILES)
+        self._handle_file_table_model_changed()
 
         title = "STIX Document Validator v%s" % (version.__version__)
         self.setWindowTitle(title)
@@ -62,8 +63,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if size == 0:
             self.stacked_main.setCurrentIndex(INDEX_ADD_FILES)
+            self.status_bar.showMessage("No Files Added.")
         else:
             self.stacked_main.setCurrentIndex(INDEX_VIEW_FILES)
+            self.status_bar.showMessage("Ready.")
 
     def _add_files(self, filenames):
         stixdocs  = [f for f in filenames if utils.is_stix(f)]
@@ -91,6 +94,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         filenames = [str(f) for f in files]
         self._add_files(filenames)
 
+    @QtCore.pyqtSlot(str)
+    def _handle_validating(self, fn):
+        fn = os.path.split(str(fn))[-1]
+        msg = "Validating {file}...".format(file=fn)
+        self.status_bar.showMessage(msg)
+
     @QtCore.pyqtSlot(str, float)
     def _handle_validation_updated(self, itemid, progress):
         LOG.debug("%s completed. Total progress: %f", itemid, progress)
@@ -106,6 +115,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _handle_validation_complete(self):
         LOG.debug("Validation completed.")
         self.progress_validation.setValue(100)
+        self.status_bar.showMessage("Ready.")
         self.group_actions.setEnabled(True)
         self.group_options.setEnabled(True)
 
@@ -123,6 +133,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.thread.finished.connect(self._handle_validation_complete)
 
         # Connect the ValidationWorker signals
+        self.worker.SIGNAL_VALIDATING.connect(self._handle_validating)
         self.worker.SIGNAL_VALIDATED.connect(self._handle_validation_updated)
         self.worker.SIGNAL_FINISHED.connect(self.thread.quit)
 

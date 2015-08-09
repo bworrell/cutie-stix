@@ -37,7 +37,7 @@ VALIDATION_COLORS = {
         },
         False: {
             'fg': QtGui.QColor(Qt.white),
-            'bg': QtGui.QColor(Qt.darkMagenta)
+            'bg': QtGui.QColor(Qt.magenta)
         }
     },
      'profile': {
@@ -47,7 +47,7 @@ VALIDATION_COLORS = {
         },
         False: {
             'fg': QtGui.QColor(Qt.white),
-            'bg': QtGui.QColor(Qt.darkRed)
+            'bg': QtGui.QColor(Qt.magenta)
         }
     },
 
@@ -265,19 +265,26 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 
         if not item.results:
             return None
+        elif isinstance(item.results, Exception):
+            return VALIDATION_COLORS["exception"][key]
 
         xml = item.results.xml
         best_practices = item.results.best_practices
         profile = item.results.profile
 
-        if isinstance(item.results, Exception):
-            return VALIDATION_COLORS["exception"][key]
-        elif col == 2 and best_practices:
+        # For the "Results" column
+        total = xml, profile, best_practices
+        valid = all(getattr(x, 'is_valid', True) is True for x in total)
+
+        if col == 2 and best_practices:
             is_valid = best_practices.is_valid
             return VALIDATION_COLORS["best_practices"][is_valid][key]
         elif col == 3 and profile:
             is_valid = profile.is_valid
             return VALIDATION_COLORS["profile"][is_valid][key]
+        elif col == 4:
+            # Just use the xml validation colors
+            return VALIDATION_COLORS['xml'][valid][key]
         else:
             is_valid = xml.is_valid
             return VALIDATION_COLORS["xml"][is_valid][key]

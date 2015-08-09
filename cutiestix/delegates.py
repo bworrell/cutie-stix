@@ -14,9 +14,13 @@ class ResultsDelegate(QtGui.QStyledItemDelegate):
     def displayText(self, value, locale=None):
 
         if value is None:
-            result = ""
+            return ""
+
+        value   = value.toPyObject()
+
+        if isinstance(value, Exception):
+            result = "Error"
         else:
-            value   = value.toPyObject()
             results = value.xml, value.profile, value.best_practices
             invalid = any(getattr(x, 'is_valid', None) is False for x in results)
             result  = "Invalid" if invalid else "Valid"
