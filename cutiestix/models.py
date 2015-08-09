@@ -14,33 +14,24 @@ from . import settings
 
 LOG = logging.getLogger(__name__)
 
-# Validation statuses
-STATUS_UNKNOWN               = 0x0
-STATUS_VALID                 = 0x1
-STATUS_XML_INVALID           = 0x2
-STATUS_BEST_PRACTICE_INVALID = 0x4
-STATUS_PROFILE_INVALID       = 0X8
 
-# Validation status colors
-STATUS_VALID                 = QtGui.QColor()
-
-
-
-class IndexedModelItem(object):
-    __slots__ = tuple()
+class IndexedModelItem(QtCore.QObject):
+    _attrs = tuple()
 
     def __init__(self, **kwargs):
-       for attr, value in kwargs.iteritems():
-           setattr(self, attr, value)
+        super(IndexedModelItem, self).__init__()
+
+        for attr, value in kwargs.iteritems():
+            setattr(self, attr, value)
 
     def __getitem__(self, item):
         index = int(item)
-        attr  = self.__slots__[index]
+        attr  = self._attrs[index]
         return getattr(self, attr)
 
     def __setitem__(self, key, value):
         index = int(key)
-        attr  = self.__slots__[index]
+        attr  = self._attrs[index]
         setattr(self, attr, value)
 
 
@@ -60,8 +51,10 @@ class ValidationResults(object):
 
 
 class ValidateTableItem(IndexedModelItem):
-    __slots__ = ("filename", "stix_version", "validate_xml",
-                 "validate_best_practices", "validate_stix_profile", "results")
+    _attrs = ("filename", "stix_version", "validate_xml",
+              "validate_best_practices", "validate_stix_profile", "results")
+
+    SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(long)
 
     def __init__(self):
         super(ValidateTableItem, self).__init__(
@@ -72,6 +65,10 @@ class ValidateTableItem(IndexedModelItem):
             validate_best_practices=settings.VALIDATE_STIX_BEST_PRACTICES,
             results=None
         )
+
+    def notify_results_updated(self):
+        LOG.debug("Sending id(self): %s", id(self))
+        self.SIGNAL_RESULTS_UPDATED.emit(id(self))
 
     @classmethod
     def from_file(cls, fn):
@@ -165,15 +162,20 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         self._data = []
         self.endResetModel()
 
+    def _get_item(self, fn):
+        item = ValidateTableItem.from_file(fn)
+        item.SIGNAL_RESULTS_UPDATED.connect(self.update_results)
+        return item
+
     def update(self, files):
         self.beginResetModel()
-        self._data = [ValidateTableItem.from_file(fn) for fn in files]
+        self._data = [self._get_item(fn) for fn in files]
         self.endResetModel()
 
     def add(self, file):
         idx = len(self._data)
         self.beginInsertRows(QtCore.QModelIndex(), idx, idx)
-        self._data.append(ValidateTableItem.from_file(file))
+        self._data.append(self._get_item(file))
         self.endInsertRows()
 
     def rowCount(self, index=None):
@@ -245,6 +247,15 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 
     def items(self):
         return self._data
+
+    @QtCore.pyqtSlot(long)
+    def update_results(self, itemid):
+        LOG.debug("Receiving itemid: %d. type(%s)", itemid, type(itemid))
+        LOG.debug("others: %s", [id(item) for item in self._data])
+
+        idx = next(x for x, item in enumerate(self._data) if id(item) == itemid)
+        idx = self.index(idx, 0)
+        self.dataChanged.emit(idx, idx)
 
 
 class BoolListModel(QtCore.QAbstractListModel):

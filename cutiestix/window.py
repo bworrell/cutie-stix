@@ -75,7 +75,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for file in stixdocs:
             model.add(file)
 
-        LOG.warn("Not STIX files. Skipping: %s", nonstix)
+        if nonstix:
+            LOG.warn("Skipping non-STIX files: %s", nonstix)
 
     @QtCore.pyqtSlot()
     def _handle_add_files(self):
@@ -87,13 +88,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             directory=__file__,
         )
 
-        LOG.debug(files)
         filenames = [str(f) for f in files]
         self._add_files(filenames)
 
     @QtCore.pyqtSlot(int, float)
     def _handle_validation_updated(self, itemid, progress):
         LOG.debug("%d completed. Total progress: %f", itemid, progress)
+
+        # # Update the table view
+        # model = self.table_files.source_model
+        # model.update_results(itemid)
+
+        # Update the progress bar
         self.progress_validation.setValue(int(progress*100))
 
     @QtCore.pyqtSlot()

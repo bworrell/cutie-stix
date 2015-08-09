@@ -2,7 +2,7 @@ from __future__ import division
 import logging
 
 # PyQt
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtCore
 
 # stix-validator
 import sdv
@@ -56,10 +56,16 @@ class ValidationWorker(QtCore.QObject):
 
         for idx, item in enumerate(self._tasks, start=1):
             LOG.debug("Running task %s", id(item))
-            results = self._validate_item(item)
-            item.results = results
-            self.SIGNAL_VALIDATED.emit(id(item), (idx / total))
 
+            try:
+                results = self._validate_item(item)
+                item.results = results
+            except Exception as ex:
+                LOG.warn("Error during validation: %s", str(ex))
+                item.results = ex
+
+            item.notify_results_updated()
+            self.SIGNAL_VALIDATED.emit(id(item), (idx / total))
 
         LOG.debug("validate() done!")
         self.SIGNAL_FINISHED.emit()
