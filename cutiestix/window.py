@@ -65,6 +65,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         bpstate.connect(self._handle_check_best_practices_state_changed)
         exschema = self.check_external_schemas.stateChanged
         exschema.connect(self._handle_check_external_schemas_state_changed)
+        pstate = self.check_profile.stateChanged
+        pstate.connect(self._handle_check_profile_state_changed)
 
     @QtCore.pyqtSlot()
     def _handle_file_table_model_changed(self):
@@ -98,6 +100,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         files = QtGui.QFileDialog.getOpenFileNames(
             parent=self,
             caption="Add STIX Files",
+            filter="XML (*.xml)",
             directory=__file__,
         )
 
@@ -124,7 +127,35 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_set_profile(self):
-        pass
+        LOG.debug("Setting STIX Profile")
+
+        profile = QtGui.QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Select STIX Profile",
+            filter="Excel (*.xlsx)",
+            directory=__file__,
+        )
+
+        if not profile:
+            LOG.debug("User cancelled out of STIX Profile selection.")
+        else:
+            LOG.debug("User selected profile %s", profile)
+            settings.STIX_PROFILE_FILENAME = str(profile)
+            self.check_profile.setEnabled(True)
+            self.check_profile.setChecked(True)
+
+    @QtCore.pyqtSlot(int)
+    def _handle_check_profile_state_changed(self, state):
+        if state == Qt.Checked:
+            enabled = True
+        elif state == Qt.Unchecked:
+            enabled = False
+        else:
+           return
+
+        model = self.table_files.source_model
+        model.enable_profile(enabled)
+        settings.VALIDATE_STIX_PROFILE = enabled
 
     @QtCore.pyqtSlot(int)
     def _handle_check_external_schemas_state_changed(self, state):

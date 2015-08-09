@@ -51,9 +51,11 @@ class ValidationWorker(QtCore.QObject):
             return result
 
         if item.validate_stix_profile:
+            LOG.debug("Running profile validation for %s using profile %s", fn, profile)
             result.profile = sdv.validate_profile(doc=fn, profile=profile)
 
         if item.validate_best_practices:
+            LOG.debug("Running best practice validation for %s", fn)
             result.best_practices = sdv.validate_best_practices(doc=fn, version=version)
 
         return result
