@@ -4,7 +4,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
 from . import models
-from .delegates import BoolEditableDelegate
+from .delegates import BoolDelegate, ResultsDelegate
 
 
 LOG = logging.getLogger(__name__)
@@ -52,12 +52,16 @@ class FilesTableView(QtGui.QTableView):
     def _init_models(self):
         self.source_model = models.ValidateTableModel(self)
         self.setModel(self.source_model)
+
+    def _resize_columns(self):
         self.resizeColumnsToContents()
+        h_header = self.horizontalHeader()
+        h_header.setStretchLastSection(True)
 
     def _connect_signals(self):
         model = self.source_model
-        model.modelReset.connect(self.resizeColumnsToContents)
-        model.rowsInserted.connect(self.resizeColumnsToContents)
+        model.modelReset.connect(self._resize_columns)
+        model.rowsInserted.connect(self._resize_columns)
 
     def _show_menu(self, pos):
         pos = self.viewport().mapToGlobal(pos)
@@ -72,9 +76,9 @@ class FilesTableView(QtGui.QTableView):
         self.action_bar = self.menu.addAction("Bar")
 
     def _init_delegates(self):
-        self.setItemDelegateForColumn(2, BoolEditableDelegate(self))
-        self.setItemDelegateForColumn(3, BoolEditableDelegate(self))
-        self.setItemDelegateForColumn(4, BoolEditableDelegate(self))
+        self.setItemDelegateForColumn(2, BoolDelegate(self))
+        self.setItemDelegateForColumn(3, BoolDelegate(self))
+        self.setItemDelegateForColumn(4, ResultsDelegate(self))
 
     def clear(self):
         self.source_model.clear()

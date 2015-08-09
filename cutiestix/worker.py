@@ -37,8 +37,8 @@ class ValidationWorker(QtCore.QObject):
         schemas = settings.XML_SCHEMA_DIR
         result  = models.ValidationResults()
 
-        if item.validate_xml:
-            result.xml = sdv.validate_xml(doc=fn, schemas=schemas, version=version)
+        # Always run XML validation
+        result.xml = sdv.validate_xml(doc=fn, schemas=schemas, version=version)
 
         if item.validate_stix_profile:
             result.profile = sdv.validate_profile(doc=fn, profile=profile)

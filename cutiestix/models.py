@@ -90,8 +90,8 @@ class ValidationResults(object):
 
 
 class ValidateTableItem(IndexedModelItem):
-    _attrs = ("filename", "stix_version", "validate_xml",
-              "validate_best_practices", "validate_stix_profile", "results")
+    _attrs = ("filename", "stix_version", "validate_best_practices",
+              "validate_stix_profile", "results")
 
     SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(str)
 
@@ -99,7 +99,6 @@ class ValidateTableItem(IndexedModelItem):
         super(ValidateTableItem, self).__init__(
             filename=None,
             stix_version=None,
-            validate_xml=settings.VALIDATE_XML,
             validate_stix_profile=settings.VALIDATE_STIX_PROFILE,
             validate_best_practices=settings.VALIDATE_STIX_BEST_PRACTICES,
             results=None
@@ -223,8 +222,8 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
 
 
 class ValidateTableModel(QtCore.QAbstractTableModel):
-    COLUMNS = ("Filename", "STIX Version", "XML Schema Validate",
-               "Best Practices Validate", "STIX Profile Validate")
+    COLUMNS = ("Filename", "STIX Version", "Best Practices Validate",
+               "STIX Profile Validate", "Results")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
     def __init__(self, parent):
@@ -259,7 +258,6 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
     def columnCount(self, index=None):
         return len(self.COLUMNS)
 
-
     def _color(self, index, key):
         row  = index.row()
         col  = index.column()
@@ -274,10 +272,10 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 
         if isinstance(item.results, Exception):
             return VALIDATION_COLORS["exception"][key]
-        elif col == 3 and best_practices:
+        elif col == 2 and best_practices:
             is_valid = best_practices.is_valid
             return VALIDATION_COLORS["best_practices"][is_valid][key]
-        elif col == 4 and profile:
+        elif col == 3 and profile:
             is_valid = profile.is_valid
             return VALIDATION_COLORS["profile"][is_valid][key]
         else:
@@ -314,7 +312,7 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         if not index.isValid():
             return flags
 
-        if index.column() in (2,3,4):
+        if index.column() in (2, 3):
             flags |= Qt.ItemIsEditable
 
         return flags
