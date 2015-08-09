@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qtui/mainwindow.ui'
+# Form implementation generated from reading ui file 'qtui\mainwindow.ui'
 #
-# Created: Sat Aug  8 16:29:22 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1158, 728)
+        MainWindow.resize(1492, 930)
         MainWindow.setStyleSheet(_fromUtf8("QLabel[notification=\"major\"] {\n"
 "    font: 28pt \"Helvetica\";\n"
 "    font-weight: bold;\n"
@@ -40,8 +39,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.main_widget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.h_layout_main = QtGui.QHBoxLayout()
-        self.h_layout_main.setSpacing(0)
         self.h_layout_main.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
+        self.h_layout_main.setSpacing(0)
         self.h_layout_main.setObjectName(_fromUtf8("h_layout_main"))
         self.tab_widget = QtGui.QTabWidget(self.main_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -80,7 +79,7 @@ class Ui_MainWindow(object):
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem1)
         self.label = QtGui.QLabel(self.page_add_files)
-        self.label.setMinimumSize(QtCore.QSize(0, 50))
+        self.label.setMinimumSize(QtCore.QSize(0, 55))
         self.label.setMaximumSize(QtCore.QSize(16777215, 50))
         self.label.setProperty("notification", _fromUtf8("major"))
         self.label.setObjectName(_fromUtf8("label"))
@@ -92,7 +91,6 @@ class Ui_MainWindow(object):
 "position: center center;"))
         self.widget_add_files.setObjectName(_fromUtf8("widget_add_files"))
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.widget_add_files)
-        self.horizontalLayout_5.setMargin(0)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.verticalLayout_4.addWidget(self.widget_add_files)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -124,7 +122,7 @@ class Ui_MainWindow(object):
         self.table_files.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_files.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
         self.table_files.setObjectName(_fromUtf8("table_files"))
-        self.table_files.horizontalHeader().setVisible(True)
+        self.table_files.horizontalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.table_files)
         self.horizontalLayout.addWidget(self.group_files)
         self.v_layout_right = QtGui.QVBoxLayout()
@@ -188,7 +186,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.h_layout_main)
         MainWindow.setCentralWidget(self.main_widget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1158, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1492, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menu_stix_validator = QtGui.QMenu(self.menubar)
         self.menu_stix_validator.setObjectName(_fromUtf8("menu_stix_validator"))
@@ -239,7 +237,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab_widget.setCurrentIndex(0)
-        self.stacked_main.setCurrentIndex(1)
+        self.stacked_main.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

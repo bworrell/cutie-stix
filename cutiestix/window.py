@@ -94,12 +94,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot(int, float)
     def _handle_validation_updated(self, itemid, progress):
         LOG.debug("%d completed. Total progress: %f", itemid, progress)
-
-        # # Update the table view
-        # model = self.table_files.source_model
-        # model.update_results(itemid)
-
-        # Update the progress bar
         self.progress_validation.setValue(int(progress*100))
 
     @QtCore.pyqtSlot()
@@ -115,16 +109,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.group_actions.setEnabled(True)
         self.group_options.setEnabled(True)
 
-    @QtCore.pyqtSlot()
-    def _handle_btn_validate_clicked(self):
+    def _validate_files(self):
         self.thread = QtCore.QThread()
         self.worker = worker.ValidationWorker()
 
-        # thread      = QtCore.QThread()
-        # validator   = worker.ValidationWorker()
-        model       = self.table_files.source_model
-
         # Add validation tasks to our worker
+        model = self.table_files.source_model
         self.worker.add_tasks(model.items())
 
         # Connect the QThread signals
@@ -137,9 +127,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.worker.SIGNAL_FINISHED.connect(self.thread.quit)
 
         # Start the thread
-        self.worker.moveToThread(self.thread)
         LOG.info("Main executing in thread %d", QtCore.QThread.currentThreadId())
+        self.worker.moveToThread(self.thread)
         self.thread.start()
+
+    @QtCore.pyqtSlot()
+    def _handle_btn_validate_clicked(self):
+        # First, reset all the results
+        model = self.table_files.source_model
+        model.reset_results()
+
+        # Start the validation thread
+        self._validate_files()
 
     @QtCore.pyqtSlot()
     def _handle_btn_clear_clicked(self):

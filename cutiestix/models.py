@@ -15,6 +15,24 @@ from . import settings
 LOG = logging.getLogger(__name__)
 
 
+VALIDATION_COLORS = {
+    'exception': {
+        'fg':  QtGui.QColor(Qt.white),
+        'bg': QtGui.QColor(Qt.red)
+    },
+    'xml': {
+        True: {
+            'fg': QtGui.QColor(Qt.darkBlue),
+            'bg': QtGui.QColor(Qt.cyan)
+        },
+        False: {
+            'fg': QtGui.QColor(Qt.white),
+            'bg': QtGui.QColor(Qt.magenta)
+        }
+    }
+}
+
+
 class IndexedModelItem(QtCore.QObject):
     _attrs = tuple()
 
@@ -54,7 +72,7 @@ class ValidateTableItem(IndexedModelItem):
     _attrs = ("filename", "stix_version", "validate_xml",
               "validate_best_practices", "validate_stix_profile", "results")
 
-    SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(long)
+    SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(ValidateTableItem, self).__init__(
@@ -66,7 +84,7 @@ class ValidateTableItem(IndexedModelItem):
             results=None
         )
 
-    def notify_results_updated(self):
+    def notify(self):
         LOG.debug("Sending id(self): %s", id(self))
         self.SIGNAL_RESULTS_UPDATED.emit(id(self))
 
@@ -76,6 +94,36 @@ class ValidateTableItem(IndexedModelItem):
         item.filename = os.path.abspath(fn)
         item.stix_version = utils.stix_version(fn)
         return item
+
+
+class ColoredRowProxyModel(QtGui.QSortFilterProxyModel):
+    def __init__(self, parent=None):
+        super(ColoredRowProxyModel, self).__init__(parent)
+        self._fgcolors = {}
+        self._bgcolors = {}
+
+    def clear(self):
+        self._fgcolors = {}
+        self._bgcolors = {}
+        self.invalidate()
+
+    def set_color(self, row, bgcolor, fgcolor):
+        self._fgcolors[row] = fgcolor
+        self._bgcolors[row] = bgcolor
+        self.invalidate()
+
+    def data(self, index, role=None):
+        if not index.isValid():
+            return None
+
+        row = index.row()
+
+        if role == Qt.BackgroundRole:
+            return self._bgcolors[row]
+        elif role == Qt.ForegroundRole:
+            return self._fgcolors[row]
+
+        return super(ColoredRowProxyModel, self).data(index, role)
 
 
 class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
@@ -184,6 +232,32 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
     def columnCount(self, index=None):
         return len(self.COLUMNS)
 
+    def _bgcolor(self, index):
+        row  = index.row()
+        item = self._data[row]
+
+        if not item.results:
+            return None
+
+        if isinstance(item.results, Exception):
+            return VALIDATION_COLORS['exception']['bg']
+        else:
+            is_valid = item.results.xml.is_valid
+            return VALIDATION_COLORS['xml'][is_valid]['bg']
+
+    def _fgcolor(self, index):
+        row  = index.row()
+        item = self._data[row]
+
+        if not item.results:
+            return None
+
+        if isinstance(item.results, Exception):
+            return VALIDATION_COLORS['exception']['fg']
+        else:
+            is_valid = item.results.xml.is_valid
+            return VALIDATION_COLORS['xml'][is_valid]['fg']
+
     def data(self, index, role=None):
         if not index.isValid():
             return None
@@ -195,6 +269,10 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             return self._data[row][col]
         elif role == Qt.EditRole:
             return self._data[row][col]
+        elif role == Qt.BackgroundRole:
+            return self._bgcolor(index)
+        elif role == Qt.ForegroundRole:
+            return self._fgcolor(index)
 
         return None
 
@@ -248,14 +326,32 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
     def items(self):
         return self._data
 
-    @QtCore.pyqtSlot(long)
+    def reset_results(self):
+        LOG.debug("Resetting model item results.")
+
+        if not self._data:
+            return
+
+        for item in self._data:
+            item.results = None
+
+        cols  = len(self.COLUMNS)
+        rows  = len(self._data)
+
+        start = self.index(0, cols)
+        end   = self.index(rows, cols)
+        self.dataChanged.emit(start, end)
+
+
+    @QtCore.pyqtSlot(int)
     def update_results(self, itemid):
         LOG.debug("Receiving itemid: %d. type(%s)", itemid, type(itemid))
         LOG.debug("others: %s", [id(item) for item in self._data])
 
-        idx = next(x for x, item in enumerate(self._data) if id(item) == itemid)
-        idx = self.index(idx, 0)
-        self.dataChanged.emit(idx, idx)
+        idx   = next(x for x, item in enumerate(self._data) if id(item) == itemid)
+        start = self.index(idx, 0)
+        end   = self.index(idx, len(self.COLUMNS))
+        self.dataChanged.emit(start, end)
 
 
 class BoolListModel(QtCore.QAbstractListModel):

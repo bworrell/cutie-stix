@@ -64,7 +64,7 @@ class ValidationWorker(QtCore.QObject):
                 LOG.warn("Error during validation: %s", str(ex))
                 item.results = ex
 
-            item.notify_results_updated()
+            item.notify()
             self.SIGNAL_VALIDATED.emit(id(item), (idx / total))
 
         LOG.debug("validate() done!")

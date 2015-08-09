@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1158</width>
-    <height>728</height>
+    <width>1492</width>
+    <height>930</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,7 +76,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="page_add_files">
              <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -121,7 +121,7 @@
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>50</height>
+                      <height>55</height>
                      </size>
                     </property>
                     <property name="maximumSize">
@@ -225,7 +225,7 @@ position: center center;</string>
                       <enum>QAbstractItemView::DropOnly</enum>
                      </property>
                      <attribute name="horizontalHeaderVisible">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </attribute>
                     </widget>
                    </item>
@@ -370,8 +370,8 @@ position: center center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1158</width>
-     <height>22</height>
+     <width>1492</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_stix_validator">
