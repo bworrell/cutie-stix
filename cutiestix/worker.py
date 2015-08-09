@@ -65,7 +65,7 @@ class ValidationWorker(QtCore.QObject):
                 item.results = ex
 
             item.notify()
-            self.SIGNAL_VALIDATED.emit(id(item), (idx / total))
+            self.SIGNAL_VALIDATED.emit(item.key(), (idx / total))
 
         LOG.debug("validate() done!")
         self.SIGNAL_FINISHED.emit()

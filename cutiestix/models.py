@@ -93,7 +93,7 @@ class ValidateTableItem(IndexedModelItem):
     _attrs = ("filename", "stix_version", "validate_xml",
               "validate_best_practices", "validate_stix_profile", "results")
 
-    SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(int)
+    SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(str)
 
     def __init__(self):
         super(ValidateTableItem, self).__init__(
@@ -105,9 +105,15 @@ class ValidateTableItem(IndexedModelItem):
             results=None
         )
 
+        self.__key = str(id(self))
+
+    def key(self):
+        return self.__key
+
     def notify(self):
-        LOG.debug("Sending id(self): %s", id(self))
-        self.SIGNAL_RESULTS_UPDATED.emit(id(self))
+        key = self.key()
+        LOG.debug("Sending id(self): %s", key)
+        self.SIGNAL_RESULTS_UPDATED.emit(key)
 
     @classmethod
     def from_file(cls, fn):
@@ -369,13 +375,13 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         end   = self.index(rows, cols)
         self.dataChanged.emit(start, end)
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.pyqtSlot(str)
     def update_results(self, itemid):
         """Let observers know that the results have changed for the item
         with the id() equal to `itemid`.
         """
         items = self._data
-        idx   = next(x for x, item in enumerate(items) if id(item) == itemid)
+        idx   = next(x for x, item in enumerate(items) if item.key() == itemid)
         start = self.index(idx, 0)
         end   = self.index(idx, len(self.COLUMNS))
         self.dataChanged.emit(start, end)

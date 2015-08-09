@@ -91,9 +91,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         filenames = [str(f) for f in files]
         self._add_files(filenames)
 
-    @QtCore.pyqtSlot(int, float)
+    @QtCore.pyqtSlot(str, float)
     def _handle_validation_updated(self, itemid, progress):
-        LOG.debug("%d completed. Total progress: %f", itemid, progress)
+        LOG.debug("%s completed. Total progress: %f", itemid, progress)
         self.progress_validation.setValue(int(progress*100))
 
     @QtCore.pyqtSlot()
