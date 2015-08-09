@@ -23,7 +23,7 @@ with open(README_FILE) as f:
 
 install_requires = [
     # PyQt >= 4.8, < 5.0
-    'stix-validator>=2.4.0'
+    'stix-validator>=2.4.0,<3.0'
 ]
 
 extras_require = {
