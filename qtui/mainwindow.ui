@@ -416,9 +416,6 @@ position: center center;</string>
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
      <horstretch>0</horstretch>
@@ -428,7 +425,7 @@ position: center center;</string>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>100</height>
+     <height>0</height>
     </size>
    </property>
   </widget>
