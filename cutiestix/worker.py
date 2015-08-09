@@ -34,11 +34,15 @@ class ValidationWorker(QtCore.QObject):
     def _validate_item(self, item):
         fn      = item.filename
         version = item.stix_version
+        schemas = None
         profile = settings.STIX_PROFILE_FILENAME
-        schemas = settings.XML_SCHEMA_DIR
         result  = models.ValidationResults()
 
+        if settings.VALIDATE_EXTERNAL_SCHEMAS:
+            schemas = settings.XML_SCHEMA_DIR
+
         # Always run XML validation
+        LOG.debug("Validating %s using schema dir %s", fn, schemas)
         result.xml = sdv.validate_xml(doc=fn, schemas=schemas, version=version)
 
         # If the file was XML invalid, don't bother running the other

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qtui\mainwindow.ui'
+# Form implementation generated from reading ui file 'qtui/mainwindow.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created: Sun Aug  9 14:26:10 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,11 +37,11 @@ class Ui_MainWindow(object):
 ""))
         self.main_widget = QtGui.QWidget(MainWindow)
         self.main_widget.setObjectName(_fromUtf8("main_widget"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.main_widget)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.horizontalLayout_6 = QtGui.QHBoxLayout(self.main_widget)
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.h_layout_main = QtGui.QHBoxLayout()
-        self.h_layout_main.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.h_layout_main.setSpacing(0)
+        self.h_layout_main.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.h_layout_main.setObjectName(_fromUtf8("h_layout_main"))
         self.tab_widget = QtGui.QTabWidget(self.main_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -91,6 +92,7 @@ class Ui_MainWindow(object):
 "position: center center;"))
         self.widget_add_files.setObjectName(_fromUtf8("widget_add_files"))
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.widget_add_files)
+        self.horizontalLayout_5.setMargin(0)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.verticalLayout_4.addWidget(self.widget_add_files)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -160,8 +162,13 @@ class Ui_MainWindow(object):
         self.check_best_practices.setObjectName(_fromUtf8("check_best_practices"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.SpanningRole, self.check_best_practices)
         self.check_profile = QtGui.QCheckBox(self.group_options)
+        self.check_profile.setEnabled(False)
         self.check_profile.setObjectName(_fromUtf8("check_profile"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.SpanningRole, self.check_profile)
+        self.check_external_schemas = QtGui.QCheckBox(self.group_options)
+        self.check_external_schemas.setEnabled(False)
+        self.check_external_schemas.setObjectName(_fromUtf8("check_external_schemas"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.check_external_schemas)
         self.v_layout_right.addWidget(self.group_options)
         self.progress_validation = QtGui.QProgressBar(self.page_validate)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -183,10 +190,10 @@ class Ui_MainWindow(object):
         self.tab_remove.setObjectName(_fromUtf8("tab_remove"))
         self.tab_widget.addTab(self.tab_remove, _fromUtf8(""))
         self.h_layout_main.addWidget(self.tab_widget)
-        self.verticalLayout_2.addLayout(self.h_layout_main)
+        self.horizontalLayout_6.addLayout(self.h_layout_main)
         MainWindow.setCentralWidget(self.main_widget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1492, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1492, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menu_stix_validator = QtGui.QMenu(self.menubar)
         self.menu_stix_validator.setObjectName(_fromUtf8("menu_stix_validator"))
@@ -202,6 +209,12 @@ class Ui_MainWindow(object):
         self.menu_stix_profile.setObjectName(_fromUtf8("menu_stix_profile"))
         MainWindow.setMenuBar(self.menubar)
         self.status_bar = QtGui.QStatusBar(MainWindow)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.status_bar.sizePolicy().hasHeightForWidth())
+        self.status_bar.setSizePolicy(sizePolicy)
+        self.status_bar.setMinimumSize(QtCore.QSize(0, 0))
         self.status_bar.setObjectName(_fromUtf8("status_bar"))
         MainWindow.setStatusBar(self.status_bar)
         self.action_add_file = QtGui.QAction(MainWindow)
@@ -224,6 +237,12 @@ class Ui_MainWindow(object):
         self.action_enable_all_best_practice.setObjectName(_fromUtf8("action_enable_all_best_practice"))
         self.action_disable_all_best_practice = QtGui.QAction(MainWindow)
         self.action_disable_all_best_practice.setObjectName(_fromUtf8("action_disable_all_best_practice"))
+        self.action_use_builtin_schemas = QtGui.QAction(MainWindow)
+        self.action_use_builtin_schemas.setCheckable(True)
+        self.action_use_builtin_schemas.setChecked(True)
+        self.action_use_builtin_schemas.setEnabled(True)
+        self.action_use_builtin_schemas.setIconVisibleInMenu(False)
+        self.action_use_builtin_schemas.setObjectName(_fromUtf8("action_use_builtin_schemas"))
         self.menu_help.addAction(self.action_about)
         self.menu_file.addAction(self.action_add_file)
         self.menu_xml_schema.addAction(self.action_set_schema_dir)
@@ -250,6 +269,7 @@ class Ui_MainWindow(object):
         self.group_options.setTitle(_translate("MainWindow", "Options", None))
         self.check_best_practices.setText(_translate("MainWindow", "Validate Best Practices", None))
         self.check_profile.setText(_translate("MainWindow", "Valdiate STIX Profile", None))
+        self.check_external_schemas.setText(_translate("MainWindow", "External Schemas", None))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_files), _translate("MainWindow", "Documents", None))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_remove), _translate("MainWindow", "Tab 2", None))
         self.menu_stix_validator.setTitle(_translate("MainWindow", "STIX Validator", None))
@@ -269,6 +289,7 @@ class Ui_MainWindow(object):
         self.action_disable_all_profile.setText(_translate("MainWindow", "Disable All", None))
         self.action_enable_all_best_practice.setText(_translate("MainWindow", "Enable All", None))
         self.action_disable_all_best_practice.setText(_translate("MainWindow", "Disable All", None))
+        self.action_use_builtin_schemas.setText(_translate("MainWindow", "Use Builtin Schemas", None))
 
 from cutiestix.widgets import FilesTableView
 import images_rc

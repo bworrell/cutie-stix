@@ -10,6 +10,7 @@ from PyQt4.QtCore import Qt
 from . import version
 from . import widgets
 from . import worker
+from . import settings
 from . import utils
 from .ui.window import Ui_MainWindow
 
@@ -50,6 +51,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Main menu
         self.action_add_file.triggered.connect(self._handle_add_files)
+        self.action_set_schema_dir.triggered.connect(self._handle_set_schema_dir)
+        self.action_set_stix_profile.triggered.connect(self._handle_set_profile)
 
         # Validate file table
         model = self.table_files.source_model
@@ -60,6 +63,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # Main Options
         bpstate = self.check_best_practices.stateChanged
         bpstate.connect(self._handle_check_best_practices_state_changed)
+        exschema = self.check_external_schemas.stateChanged
+        exschema.connect(self._handle_check_external_schemas_state_changed)
 
     @QtCore.pyqtSlot()
     def _handle_file_table_model_changed(self):
@@ -99,16 +104,53 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         filenames = [str(f) for f in files]
         self._add_files(filenames)
 
+    @QtCore.pyqtSlot()
+    def _handle_set_schema_dir(self):
+        LOG.debug("Setting schema dir")
+
+        schemadir = QtGui.QFileDialog.getExistingDirectory(
+            parent=self,
+            caption="Set Schema Directory",
+            directory=__file__,
+        )
+
+        if not schemadir:
+            LOG.debug("User cancelled out of schema dir selection.")
+        else:
+            LOG.debug("User selected schema dir %s", schemadir)
+            settings.XML_SCHEMA_DIR = str(schemadir)
+            self.check_external_schemas.setEnabled(True)
+            self.check_external_schemas.setChecked(True)
+
+    @QtCore.pyqtSlot()
+    def _handle_set_profile(self):
+        pass
+
+    @QtCore.pyqtSlot(int)
+    def _handle_check_external_schemas_state_changed(self, state):
+        if state == Qt.Checked:
+            enabled = True
+        elif state == Qt.Unchecked:
+            enabled = False
+        else:
+           return
+
+        model = self.table_files.source_model
+        model.reset_results()
+        settings.VALIDATE_EXTERNAL_SCHEMAS = enabled
+
     @QtCore.pyqtSlot(int)
     def _handle_check_best_practices_state_changed(self, state):
-        model  = self.table_files.source_model
-
         if state == Qt.Checked:
-            model.enable_best_practices(True)
+            enabled = True
         elif state == Qt.Unchecked:
-            model.enable_best_practices(False)
+            enabled = False
         else:
-           pass
+           return
+
+        model = self.table_files.source_model
+        model.enable_best_practices(enabled)
+        settings.VALIDATE_STIX_BEST_PRACTICES = enabled
 
     @QtCore.pyqtSlot(str)
     def _handle_validating(self, fn):

@@ -314,8 +314,21 @@ position: center center;</string>
                      </item>
                      <item row="1" column="0" colspan="2">
                       <widget class="QCheckBox" name="check_profile">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
                        <property name="text">
                         <string>Valdiate STIX Profile</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QCheckBox" name="check_external_schemas">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="text">
+                        <string>External Schemas</string>
                        </property>
                       </widget>
                      </item>
@@ -480,6 +493,23 @@ position: center center;</string>
   <action name="action_disable_all_best_practice">
    <property name="text">
     <string>Disable All</string>
+   </property>
+  </action>
+  <action name="action_use_builtin_schemas">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Builtin Schemas</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

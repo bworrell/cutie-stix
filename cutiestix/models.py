@@ -399,9 +399,13 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         for item in self._data:
             item.validate_best_practices = enabled
 
-        start = self.index(0, self.columnCount())
-        end   = self.index(self.rowCount(), self.columnCount())
-        self.dataChanged.emit(start, end)
+        self.reset_results()
+
+    def enable_profile(self, enabled=True):
+        for item in self._data:
+            item.validate_stix_profile = enabled
+
+        self.reset_results()
 
 
 class BoolListModel(QtCore.QAbstractListModel):
