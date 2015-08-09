@@ -327,6 +327,7 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return self._data
 
     def reset_results(self):
+        """Resets the results on all the items in the model."""
         LOG.debug("Resetting model item results.")
 
         if not self._data:
@@ -342,13 +343,13 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         end   = self.index(rows, cols)
         self.dataChanged.emit(start, end)
 
-
     @QtCore.pyqtSlot(int)
     def update_results(self, itemid):
-        LOG.debug("Receiving itemid: %d. type(%s)", itemid, type(itemid))
-        LOG.debug("others: %s", [id(item) for item in self._data])
-
-        idx   = next(x for x, item in enumerate(self._data) if id(item) == itemid)
+        """Let observers know that the results have changed for the item
+        with the id() equal to `itemid`.
+        """
+        items = self._data
+        idx   = next(x for x, item in enumerate(items) if id(item) == itemid)
         start = self.index(idx, 0)
         end   = self.index(idx, len(self.COLUMNS))
         self.dataChanged.emit(start, end)

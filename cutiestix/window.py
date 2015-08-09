@@ -133,7 +133,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_btn_validate_clicked(self):
-        # First, reset all the results
+        # First, reset all the results so we don't get into a race with the
+        # validation thread.
         model = self.table_files.source_model
         model.reset_results()
 

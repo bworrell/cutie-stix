@@ -122,7 +122,7 @@ class Ui_MainWindow(object):
         self.table_files.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_files.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
         self.table_files.setObjectName(_fromUtf8("table_files"))
-        self.table_files.horizontalHeader().setVisible(False)
+        self.table_files.horizontalHeader().setVisible(True)
         self.verticalLayout.addWidget(self.table_files)
         self.horizontalLayout.addWidget(self.group_files)
         self.v_layout_right = QtGui.QVBoxLayout()
@@ -237,7 +237,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab_widget.setCurrentIndex(0)
-        self.stacked_main.setCurrentIndex(0)
+        self.stacked_main.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
