@@ -88,14 +88,40 @@ class FilesTableView(QtGui.QTableView):
         model.modelReset.connect(self._resize_columns)
         model.rowsInserted.connect(self._resize_columns)
 
+    def _get_selected_items(self):
+        model = self.selectionModel()
+        selected = model.selectedRows()
+
+        if not selected:
+            return []
+
+        tblmodel = self.source_model
+        items = [tblmodel.data(idx, role=Qt.UserRole) for idx in selected]
+        return items
+
     def _show_menu(self, pos):
         # First determine what we can do with the current table selection
         model = self.selectionModel()
         selected = model.hasSelection()
-        count = len(model.selectedRows())
+        items = self._get_selected_items()
+        count = len(items)
 
         self.action_open.setEnabled(count == 1)
         self.action_remove.setEnabled(selected)
+
+        first = items[0]
+        results = getattr(first, 'results', None)
+        
+        if count == 1 and results is not None:
+            show_xml     = results.xml is not None
+            show_bp      = results.best_practices is not None
+            show_profile = results.profile is not None
+        else:
+            show_xml = show_bp = show_profile = False
+
+        self.action_go_to_xml.setVisible(show_xml)
+        self.action_go_to_best_practices.setVisible(show_bp)
+        self.action_go_to_profile.setVisible(show_profile)
 
         # Show the menu!
         pos = self.viewport().mapToGlobal(pos)
@@ -103,20 +129,13 @@ class FilesTableView(QtGui.QTableView):
 
     @QtCore.pyqtSlot()
     def _remove_files(self):
-        selmodel = self.selectionModel()
-        selected = selmodel.selectedRows()
-        tblmodel = self.source_model
-
-        items = [tblmodel.data(index, Qt.UserRole) for index in selected]
-        tblmodel.remove_items(items)
+        model = self.source_model
+        items = self._get_selected_items()
+        model.remove_items(items)
 
     @QtCore.pyqtSlot()
     def _open_file(self):
-        selmodel = self.selectionModel()
-        selected = selmodel.selectedRows()
-        tblmodel = self.source_model
-
-        item = next(tblmodel.data(index, Qt.UserRole) for index in selected)
+        item = next(self._get_selected_items())
         file = item.filename
 
         LOG.debug("Launching %s...", file)
@@ -129,8 +148,12 @@ class FilesTableView(QtGui.QTableView):
         self.customContextMenuRequested.connect(self._show_menu)
 
         self.menu = QtGui.QMenu(self)
-        self.action_open = self.menu.addAction("Open...")
-        self.action_remove = self.menu.addAction("Remove")
+        self.action_open = self.menu.addAction("Open File...")
+        self.action_remove = self.menu.addAction("Remove File")
+        self.menu.addSeparator()
+        self.action_go_to_xml = self.menu.addAction("XML Results...")
+        self.action_go_to_best_practices = self.menu.addAction("Best Practices Results...")
+        self.action_go_to_profile = self.menu.addAction("Profile Results...")
 
         # Wire up signals
         self.action_remove.triggered.connect(self._remove_files)
