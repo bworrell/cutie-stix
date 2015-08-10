@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1492</width>
+    <width>1523</width>
     <height>930</height>
    </rect>
   </property>
@@ -43,6 +43,9 @@
         </property>
         <property name="tabPosition">
          <enum>QTabWidget::North</enum>
+        </property>
+        <property name="tabShape">
+         <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
          <number>0</number>
@@ -383,26 +386,22 @@ position: center center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1492</width>
-     <height>22</height>
+     <width>1523</width>
+     <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_stix_validator">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
-     <string>STIX Validator</string>
+     <string>File</string>
     </property>
+    <addaction name="action_add_file"/>
+    <addaction name="action_add_directory"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="action_about"/>
-   </widget>
-   <widget class="QMenu" name="menu_file">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="action_add_file"/>
    </widget>
    <widget class="QMenu" name="menu_options">
     <property name="title">
@@ -422,8 +421,8 @@ position: center center;</string>
     </widget>
     <addaction name="menu_xml_schema"/>
     <addaction name="menu_stix_profile"/>
+    <addaction name="actionSettings"/>
    </widget>
-   <addaction name="menu_stix_validator"/>
    <addaction name="menu_file"/>
    <addaction name="menu_options"/>
    <addaction name="menu_help"/>
@@ -441,6 +440,9 @@ position: center center;</string>
      <height>0</height>
     </size>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
   </widget>
   <action name="action_add_file">
    <property name="text">
@@ -448,11 +450,6 @@ position: center center;</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="action_add_directory">
-   <property name="text">
-    <string>Add Directory...</string>
    </property>
   </action>
   <action name="action_about">
@@ -464,6 +461,9 @@ position: center center;</string>
    <property name="text">
     <string>Set Schema Diectory</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionEnable">
    <property name="text">
@@ -473,6 +473,9 @@ position: center center;</string>
   <action name="action_set_stix_profile">
    <property name="text">
     <string>Set STIX Profile</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="action_enable_all_profile">
@@ -510,6 +513,24 @@ position: center center;</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_add_directory_2">
+   <property name="text">
+    <string>Add Directory...</string>
+   </property>
+  </action>
+  <action name="action_add_directory">
+   <property name="text">
+    <string>Add Directory...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings...</string>
    </property>
   </action>
  </widget>

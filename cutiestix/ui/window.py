@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'qtui/mainwindow.ui'
+# Form implementation generated from reading ui file 'qtui\mainwindow.ui'
 #
-# Created: Sun Aug  9 14:26:10 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1492, 930)
+        MainWindow.resize(1523, 930)
         MainWindow.setStyleSheet(_fromUtf8("QLabel[notification=\"major\"] {\n"
 "    font: 28pt \"Helvetica\";\n"
 "    font-weight: bold;\n"
@@ -40,8 +39,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6 = QtGui.QHBoxLayout(self.main_widget)
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.h_layout_main = QtGui.QHBoxLayout()
-        self.h_layout_main.setSpacing(0)
         self.h_layout_main.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
+        self.h_layout_main.setSpacing(0)
         self.h_layout_main.setObjectName(_fromUtf8("h_layout_main"))
         self.tab_widget = QtGui.QTabWidget(self.main_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -50,6 +49,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tab_widget.sizePolicy().hasHeightForWidth())
         self.tab_widget.setSizePolicy(sizePolicy)
         self.tab_widget.setTabPosition(QtGui.QTabWidget.North)
+        self.tab_widget.setTabShape(QtGui.QTabWidget.Rounded)
         self.tab_widget.setElideMode(QtCore.Qt.ElideRight)
         self.tab_widget.setDocumentMode(False)
         self.tab_widget.setTabsClosable(False)
@@ -92,7 +92,6 @@ class Ui_MainWindow(object):
 "position: center center;"))
         self.widget_add_files.setObjectName(_fromUtf8("widget_add_files"))
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.widget_add_files)
-        self.horizontalLayout_5.setMargin(0)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.verticalLayout_4.addWidget(self.widget_add_files)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -193,14 +192,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addLayout(self.h_layout_main)
         MainWindow.setCentralWidget(self.main_widget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1492, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1523, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menu_stix_validator = QtGui.QMenu(self.menubar)
-        self.menu_stix_validator.setObjectName(_fromUtf8("menu_stix_validator"))
-        self.menu_help = QtGui.QMenu(self.menubar)
-        self.menu_help.setObjectName(_fromUtf8("menu_help"))
         self.menu_file = QtGui.QMenu(self.menubar)
         self.menu_file.setObjectName(_fromUtf8("menu_file"))
+        self.menu_help = QtGui.QMenu(self.menubar)
+        self.menu_help.setObjectName(_fromUtf8("menu_help"))
         self.menu_options = QtGui.QMenu(self.menubar)
         self.menu_options.setObjectName(_fromUtf8("menu_options"))
         self.menu_xml_schema = QtGui.QMenu(self.menu_options)
@@ -215,12 +212,11 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.status_bar.sizePolicy().hasHeightForWidth())
         self.status_bar.setSizePolicy(sizePolicy)
         self.status_bar.setMinimumSize(QtCore.QSize(0, 0))
+        self.status_bar.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.status_bar.setObjectName(_fromUtf8("status_bar"))
         MainWindow.setStatusBar(self.status_bar)
         self.action_add_file = QtGui.QAction(MainWindow)
         self.action_add_file.setObjectName(_fromUtf8("action_add_file"))
-        self.action_add_directory = QtGui.QAction(MainWindow)
-        self.action_add_directory.setObjectName(_fromUtf8("action_add_directory"))
         self.action_about = QtGui.QAction(MainWindow)
         self.action_about.setObjectName(_fromUtf8("action_about"))
         self.action_set_schema_dir = QtGui.QAction(MainWindow)
@@ -243,13 +239,20 @@ class Ui_MainWindow(object):
         self.action_use_builtin_schemas.setEnabled(True)
         self.action_use_builtin_schemas.setIconVisibleInMenu(False)
         self.action_use_builtin_schemas.setObjectName(_fromUtf8("action_use_builtin_schemas"))
-        self.menu_help.addAction(self.action_about)
+        self.action_add_directory_2 = QtGui.QAction(MainWindow)
+        self.action_add_directory_2.setObjectName(_fromUtf8("action_add_directory_2"))
+        self.action_add_directory = QtGui.QAction(MainWindow)
+        self.action_add_directory.setObjectName(_fromUtf8("action_add_directory"))
+        self.actionSettings = QtGui.QAction(MainWindow)
+        self.actionSettings.setObjectName(_fromUtf8("actionSettings"))
         self.menu_file.addAction(self.action_add_file)
+        self.menu_file.addAction(self.action_add_directory)
+        self.menu_help.addAction(self.action_about)
         self.menu_xml_schema.addAction(self.action_set_schema_dir)
         self.menu_stix_profile.addAction(self.action_set_stix_profile)
         self.menu_options.addAction(self.menu_xml_schema.menuAction())
         self.menu_options.addAction(self.menu_stix_profile.menuAction())
-        self.menubar.addAction(self.menu_stix_validator.menuAction())
+        self.menu_options.addAction(self.actionSettings)
         self.menubar.addAction(self.menu_file.menuAction())
         self.menubar.addAction(self.menu_options.menuAction())
         self.menubar.addAction(self.menu_help.menuAction())
@@ -272,24 +275,28 @@ class Ui_MainWindow(object):
         self.check_external_schemas.setText(_translate("MainWindow", "External Schemas", None))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_files), _translate("MainWindow", "Documents", None))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_remove), _translate("MainWindow", "Tab 2", None))
-        self.menu_stix_validator.setTitle(_translate("MainWindow", "STIX Validator", None))
-        self.menu_help.setTitle(_translate("MainWindow", "Help", None))
         self.menu_file.setTitle(_translate("MainWindow", "File", None))
+        self.menu_help.setTitle(_translate("MainWindow", "Help", None))
         self.menu_options.setTitle(_translate("MainWindow", "Options", None))
         self.menu_xml_schema.setTitle(_translate("MainWindow", "XML Schema", None))
         self.menu_stix_profile.setTitle(_translate("MainWindow", "STIX Profile", None))
         self.action_add_file.setText(_translate("MainWindow", "Add Files...", None))
         self.action_add_file.setShortcut(_translate("MainWindow", "Ctrl+O", None))
-        self.action_add_directory.setText(_translate("MainWindow", "Add Directory...", None))
         self.action_about.setText(_translate("MainWindow", "About...", None))
         self.action_set_schema_dir.setText(_translate("MainWindow", "Set Schema Diectory", None))
+        self.action_set_schema_dir.setShortcut(_translate("MainWindow", "Ctrl+S", None))
         self.actionEnable.setText(_translate("MainWindow", "Enable", None))
         self.action_set_stix_profile.setText(_translate("MainWindow", "Set STIX Profile", None))
+        self.action_set_stix_profile.setShortcut(_translate("MainWindow", "Ctrl+R", None))
         self.action_enable_all_profile.setText(_translate("MainWindow", "Enable All", None))
         self.action_disable_all_profile.setText(_translate("MainWindow", "Disable All", None))
         self.action_enable_all_best_practice.setText(_translate("MainWindow", "Enable All", None))
         self.action_disable_all_best_practice.setText(_translate("MainWindow", "Disable All", None))
         self.action_use_builtin_schemas.setText(_translate("MainWindow", "Use Builtin Schemas", None))
+        self.action_add_directory_2.setText(_translate("MainWindow", "Add Directory...", None))
+        self.action_add_directory.setText(_translate("MainWindow", "Add Directory...", None))
+        self.action_add_directory.setShortcut(_translate("MainWindow", "Ctrl+D", None))
+        self.actionSettings.setText(_translate("MainWindow", "Settings...", None))
 
 from cutiestix.widgets import FilesTableView
 import images_rc

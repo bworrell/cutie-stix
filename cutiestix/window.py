@@ -24,7 +24,7 @@ INDEX_ADD_FILES  = 0
 INDEX_VIEW_FILES = 1
 
 
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
@@ -38,11 +38,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         widgets.center(self)
 
     def _populate(self):
+        # Remove the unwanted, empty tab
         self.tab_widget.removeTab(1)
-        self._handle_file_table_model_changed()
 
-        title = "STIX Document Validator v%s" % (version.__version__)
-        self.setWindowTitle(title)
+        # Add a permanent status bar
+        self.status = QtGui.QLabel()
+        self.statusBar().addPermanentWidget(self.status)
+
+        # Update the status bar and make sure we're on the right stacked
+        # widget.
+        self._handle_file_table_model_changed()
 
     def _connect_ui(self):
         # Buttons in the main window
@@ -51,8 +56,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Main menu
         self.action_add_file.triggered.connect(self._handle_add_files)
+        self.action_add_directory.triggered.connect(self._handle_add_directory)
         self.action_set_schema_dir.triggered.connect(self._handle_set_schema_dir)
         self.action_set_stix_profile.triggered.connect(self._handle_set_profile)
+        self.action_about.triggered.connect(self._show_about)
 
         # Validate file table
         model = self.table_files.source_model
@@ -69,16 +76,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         pstate.connect(self._handle_check_profile_state_changed)
 
     @QtCore.pyqtSlot()
+    def _show_about(self):
+        about = widgets.AboutDialog(self)
+        about.exec_()
+
+    @QtCore.pyqtSlot()
     def _handle_file_table_model_changed(self):
         model = self.table_files.source_model
         size  = model.rowCount()
 
         if size == 0:
             self.stacked_main.setCurrentIndex(INDEX_ADD_FILES)
-            self.status_bar.showMessage("No Files Added.")
+            self.update_status("No Files Added.")
         else:
             self.stacked_main.setCurrentIndex(INDEX_VIEW_FILES)
-            self.status_bar.showMessage("Ready.")
+            self.update_status("Ready.")
 
     def _add_files(self, filenames):
         stixdocs  = [f for f in filenames if utils.is_stix(f)]
@@ -106,6 +118,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         filenames = [str(f) for f in files]
         self._add_files(filenames)
+
+    @QtCore.pyqtSlot()
+    def _handle_add_directory(self):
+        LOG.debug("Adding directory")
+
+        xmldir = QtGui.QFileDialog.getExistingDirectory(
+            parent=self,
+            caption="Select STIX Document Directory",
+            directory=__file__,
+        )
+
+        if not xmldir:
+            LOG.debug("User cancelled out of xml directory selection")
+        else:
+            xml_files = utils.list_xml_files(str(xmldir))
+            self._add_files(xml_files)
 
     @QtCore.pyqtSlot()
     def _handle_set_schema_dir(self):
@@ -187,7 +215,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _handle_validating(self, fn):
         fn = os.path.split(str(fn))[-1]
         msg = "Validating {file}...".format(file=fn)
-        self.status_bar.showMessage(msg)
+        self.update_status(msg)
 
     @QtCore.pyqtSlot(str, float)
     def _handle_validation_updated(self, itemid, progress):
@@ -204,7 +232,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _handle_validation_complete(self):
         LOG.debug("Validation completed.")
         self.progress_validation.setValue(100)
-        self.status_bar.showMessage("Ready.")
+        self.update_status("Ready.")
         self.group_actions.setEnabled(True)
         self.group_options.setEnabled(True)
 
@@ -245,3 +273,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _handle_btn_clear_clicked(self):
         LOG.debug("handle_btn_clear_clicked()")
         self.table_files.clear()
+
+    def update_status(self, msg):
+        self.status.setText(msg)

@@ -310,6 +310,8 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             return self._bgcolor(index)
         elif role == Qt.ForegroundRole:
             return self._fgcolor(index)
+        elif role  == Qt.UserRole:
+            return self._data[row]
 
         return None
 
@@ -352,6 +354,33 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             return True
 
         return False
+
+    def remove_item(self, item):
+        if hasattr(item, "toPyObject"):
+            item = item.toPyObject()
+
+        if item not in self._data:
+            LOG.warn("Attempting to remove something I don't have...")
+        else:
+            row = self._data.index(item)
+            self.removeRow(row)
+
+    def remove_items(self, items):
+        for item in items:
+            self.remove_item(item)
+
+    def removeRow(self, row, parent=QtCore.QModelIndex()):
+        self.beginRemoveRows(parent, row, row)
+        del self._data[row]
+        self.endRemoveRows()
+
+    def removeRows(self, row, count, parent=QtCore.QModelIndex()):
+        self.beginRemoveRows(parent, row, row + count)
+
+        for idx in xrange(row, row + count):
+            del self._data[idx]
+
+        self.endRemoveRows()
 
     def headerData(self, column, orientation, role=None):
         if role != Qt.DisplayRole:

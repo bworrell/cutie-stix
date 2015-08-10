@@ -62,3 +62,8 @@ def is_stix(fn):
         return sdv.utils.is_stix(fn)
     except Exception:
         return False
+
+
+def list_xml_files(dirname):
+    files = sdv.utils.list_xml_files(dirname, recursive=True)
+    return files
