@@ -22,12 +22,17 @@ The following are screenshots of **cutiestix**.
 ### Main Window
 The following is a screenshot of the main validation window of **cutiestix**.  
 
-![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/develop/screenshots/mainwindow.png)
+![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/mainwindow.png)
 
 ### Validation Remediation and Reports
 Users can open XML files to remediate validation errors and view validation reports (in development).  
 
-![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/develop/screenshots/menus.png)
+![Menus](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/menus.png)
+
+
+Tabbed interface to separate validation reports.  
+
+![Tabs] (https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/tabs.png)
 
 ### Terms
 This was developed as a way to mess around with PyQt. Use at your own risk! See LICENSE file for complete terms.
