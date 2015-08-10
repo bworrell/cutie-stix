@@ -122,19 +122,26 @@ class ValidateTableItem(IndexedModelItem):
         return item
 
 
-class XmlResultsTableModel(QtCore.QAbstractTableModel):
+class _NoError:
+    line    = "N/A"
+    message = "No Errors"
+
+
+class ValidationResultsTableModel(QtCore.QAbstractTableModel):
     COLUMNS = ("Line Number", "Error")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
     def __init__(self, parent):
-        super(XmlResultsTableModel, self).__init__(parent)
-        self._data = []
+        super(ValidationResultsTableModel, self).__init__(parent)
+        self._data = [_NoError]
 
     def update(self, results):
         self.beginResetModel()
 
         if results is None:
-            self._data = []
+            self._data = [_NoError]
+        elif not results.errors:
+            self._data = [_NoError]
         else:
             self._data = results.errors
 

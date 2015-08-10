@@ -55,8 +55,8 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         self._handle_file_table_model_changed()
 
         # Used for displaying results
-        self._result_tabs['xml'] = widgets.ResultsWidget(models.XmlResultsTableModel)
-        # self._result_tabs['profile'] = widgets.ResultsWidget()
+        self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
+        self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
         # self._result_tabs['best_practices'] = widgets.ResultsWidget()
 
     def _connect_ui(self):
@@ -307,12 +307,27 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         try:
             self._populate_xml_results(item)
         except AttributeError as ex:
-            LOG.error("Error retrieving xml validation resutls: %s", str(ex))
+            LOG.error("Error retrieving xml validation results: %s", str(ex))
+
+    def _populate_profile_results(self, item):
+        tab = self._result_tabs.get('profile')
+        tab.set_results(item.filename, item.results.profile)
+
+        if self.tab_widget.indexOf(tab) == -1:
+            self.tab_widget.addTab(tab, "STIX Profile Results")
+
+        self.tab_widget.setCurrentWidget(tab)
 
     @QtCore.pyqtSlot(str)
     def _handle_profile_results_requested(self, itemid):
         model = self.table_files.source_model
         item  = model.lookup(str(itemid))
+
+        try:
+            self._populate_profile_results(item)
+        except AttributeError as ex:
+            LOG.error("Error retrieving profile validation results: %s", str(ex))
+
 
     @QtCore.pyqtSlot(str)
     def _handle_best_practices_results_requested(self, itemid):
