@@ -7,8 +7,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
 # internal
-from . import version
 from . import widgets
+from . import models
 from . import worker
 from . import settings
 from . import utils
@@ -27,6 +27,8 @@ INDEX_VIEW_FILES = 1
 class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+        self._result_tabs = {}
+
         self.setupUi(self)
         self._populate()
         self._connect_ui()
@@ -41,6 +43,9 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # Remove the unwanted, empty tab
         self.tab_widget.removeTab(1)
 
+        # Prevent closing the first tab
+        # self.tab_widget.disable_remove(0)
+
         # Add a permanent status bar
         self.status = QtGui.QLabel()
         self.statusBar().addPermanentWidget(self.status)
@@ -48,6 +53,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # Update the status bar and make sure we're on the right stacked
         # widget.
         self._handle_file_table_model_changed()
+
+        # Used for displaying results
+        self._result_tabs['xml'] = widgets.ResultsWidget(models.XmlResultsTableModel)
+        # self._result_tabs['profile'] = widgets.ResultsWidget()
+        # self._result_tabs['best_practices'] = widgets.ResultsWidget()
 
     def _connect_ui(self):
         # Buttons in the main window
@@ -66,6 +76,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         model.modelReset.connect(self._handle_file_table_model_changed)
         model.rowsInserted.connect(self._handle_file_table_model_changed)
         model.rowsRemoved.connect(self._handle_file_table_model_changed)
+
+        table = self.table_files
+        table.SIGNAL_XML_RESULTS_REQUESTED.connect(self._handle_xml_results_requested)
+        table.SIGNAL_PROFILE_RESULTS_REQUESTED.connect(self._handle_profile_results_requested)
+        table.SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED.connect(self._handle_best_practices_results_requested)
 
         # Main Options
         bpstate = self.check_best_practices.stateChanged
@@ -273,6 +288,36 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
     def _handle_btn_clear_clicked(self):
         LOG.debug("handle_btn_clear_clicked()")
         self.table_files.clear()
+
+    def _populate_xml_results(self, item):
+        tab = self._result_tabs.get('xml')
+        tab.set_results(item.filename, item.results.xml)
+
+        if self.tab_widget.indexOf(tab) == -1:
+            self.tab_widget.addTab(tab, "XML Results")
+
+        self.tab_widget.setCurrentWidget(tab)
+
+    @QtCore.pyqtSlot(str)
+    def _handle_xml_results_requested(self, itemid):
+        LOG.debug("XML results requested...")
+        model   = self.table_files.source_model
+        item    = model.lookup(str(itemid))
+
+        try:
+            self._populate_xml_results(item)
+        except AttributeError as ex:
+            LOG.error("Error retrieving xml validation resutls: %s", str(ex))
+
+    @QtCore.pyqtSlot(str)
+    def _handle_profile_results_requested(self, itemid):
+        model = self.table_files.source_model
+        item  = model.lookup(str(itemid))
+
+    @QtCore.pyqtSlot(str)
+    def _handle_best_practices_results_requested(self, itemid):
+        model = self.table_files.source_model
+        item  = model.lookup(str(itemid))
 
     def update_status(self, msg):
         self.status.setText(msg)

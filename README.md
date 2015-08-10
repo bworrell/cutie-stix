@@ -3,7 +3,7 @@ cutiestix
 
 A desktop application interface to [stix-validator](https://pypi.python.org/pypi/stix-validator) written in PyQt. 
 
-## The Name
+## The Name?
 It seems like a lot of people pronounce "Qt" as "cutie", so we end up with the formula: Qt + STIX = "cutiestix".
 
 ## Requirements
@@ -27,6 +27,5 @@ The following is a screenshot of the main validation window of **cutiestix**.
 Users can open XML files to remediate validation errors and view validation reports (in development).
 ![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/develop/screenshots/menus.png)
 
-Terms
------
+### Terms
 This was developed as a way to mess around with PyQt. Use at your own risk! See LICENSE file for complete terms.

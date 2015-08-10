@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1523</width>
-    <height>930</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
        <enum>QLayout::SetNoConstraint</enum>
       </property>
       <item>
-       <widget class="QTabWidget" name="tab_widget">
+       <widget class="MainTabView" name="tab_widget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -539,6 +539,12 @@ position: center center;</string>
    <class>FilesTableView</class>
    <extends>QTableView</extends>
    <header>cutiestix/widgets.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MainTabView</class>
+   <extends>QTabWidget</extends>
+   <header>cutiestix/widgets.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

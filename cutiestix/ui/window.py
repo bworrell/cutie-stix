@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1523, 930)
+        MainWindow.resize(1523, 576)
         MainWindow.setStyleSheet(_fromUtf8("QLabel[notification=\"major\"] {\n"
 "    font: 28pt \"Helvetica\";\n"
 "    font-weight: bold;\n"
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.h_layout_main.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.h_layout_main.setSpacing(0)
         self.h_layout_main.setObjectName(_fromUtf8("h_layout_main"))
-        self.tab_widget = QtGui.QTabWidget(self.main_widget)
+        self.tab_widget = MainTabView(self.main_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -298,5 +298,5 @@ class Ui_MainWindow(object):
         self.action_add_directory.setShortcut(_translate("MainWindow", "Ctrl+D", None))
         self.actionSettings.setText(_translate("MainWindow", "Settings...", None))
 
-from cutiestix.widgets import FilesTableView
+from cutiestix.widgets import FilesTableView, MainTabView
 import images_rc

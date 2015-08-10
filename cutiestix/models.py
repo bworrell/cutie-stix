@@ -122,48 +122,67 @@ class ValidateTableItem(IndexedModelItem):
         return item
 
 
-class ColoredRowProxyModel(QtGui.QSortFilterProxyModel):
-    def __init__(self, parent=None):
-        super(ColoredRowProxyModel, self).__init__(parent)
-        self._fgcolors = {}
-        self._bgcolors = {}
+class XmlResultsTableModel(QtCore.QAbstractTableModel):
+    COLUMNS = ("Line Number", "Error")
+    COLUMN_INDEXES = dict(enumerate(COLUMNS))
+
+    def __init__(self, parent):
+        super(XmlResultsTableModel, self).__init__(parent)
+        self._data = []
+
+    def update(self, results):
+        self.beginResetModel()
+
+        if results is None:
+            self._data = []
+        else:
+            self._data = results.errors
+
+        self.endResetModel()
 
     def clear(self):
-        self._fgcolors = {}
-        self._bgcolors = {}
-        self.invalidate()
+        self.update(None)
 
-    def set_color(self, row, bgcolor, fgcolor):
-        self._fgcolors[row] = fgcolor
-        self._bgcolors[row] = bgcolor
-        self.invalidate()
+    def headerData(self, column, orientation, role=None):
+        if role != Qt.DisplayRole:
+            return None
+
+        if orientation == Qt.Horizontal:
+            return self.COLUMN_INDEXES[column]
+        elif orientation == Qt.Vertical:
+            return column + 1
+
+        return None
+
+    def _get_text(self, index):
+        row    = index.row()
+        col = index.column()
+        error = self._data[row]
+
+        if col == 0:
+            return str(error.line)
+        elif col == 1:
+            return error.message
 
     def data(self, index, role=None):
         if not index.isValid():
             return None
 
-        row = index.row()
+        if role == Qt.DisplayRole:
+            return self._get_text(index)
 
-        if role == Qt.BackgroundRole:
-            return self._bgcolors[row]
-        elif role == Qt.ForegroundRole:
-            return self._fgcolors[row]
+        return None
 
-        return super(ColoredRowProxyModel, self).data(index, role)
+    def rowCount(self, index=None):
+        return len(self._data)
+
+    def columnCount(self, index=None):
+        return len(self.COLUMNS)
 
 
 class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
-    COL_NAMES = (
-        "Filename",
-        "Title",
-        "Line",
-        "Tag",
-        "ID",
-        "IDREF",
-        "Message"
-    )
-
-    COL_INDEXES = dict(enumerate(COL_NAMES))
+    COLUMNS = ("Title", "Line", "Tag", "@id", "@idref", "Error")
+    COL_INDEXES = dict(enumerate(COLUMNS))
 
     def __init__(self, parent, data=None):
         super(BestPracticeResultsTableModel, self).__init__(parent)
@@ -435,6 +454,9 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             item.validate_stix_profile = enabled
 
         self.reset_results()
+
+    def lookup(self, itemid):
+        return next(item for item in self._data if item.key() == itemid)
 
 
 class BoolListModel(QtCore.QAbstractListModel):

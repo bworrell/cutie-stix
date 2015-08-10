@@ -25,6 +25,28 @@ def center(widget):
     widget.move(xpos, ypos)
 
 
+class MainTabView(QtGui.QTabWidget):
+    def __init__(self, parent=None):
+        super(MainTabView, self).__init__(parent)
+
+    def disable_remove(self, index):
+        bar = self.tabBar()
+        bar.tabButton(index, QtGui.QTabBar.RightSide).setVisible(False)
+
+
+class ResultsTableView(QtGui.QTableView):
+    def __init__(self, parent=None):
+        super(ResultsTableView, self).__init__(parent)
+        self._init_headers()
+        self.setAlternatingRowColors(True)
+        self.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+
+    def _init_headers(self):
+        h_header = self.horizontalHeader()
+        h_header.setResizeMode(QtGui.QHeaderView.Interactive)
+        h_header.setStretchLastSection(True)
+
+
 class AboutDialog(Ui_DialogAbout, QtGui.QDialog):
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)
@@ -58,6 +80,10 @@ class BoolComboBox(QtGui.QComboBox):
 
 
 class FilesTableView(QtGui.QTableView):
+    SIGNAL_XML_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
+    SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
+    SIGNAL_PROFILE_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
+
     def __init__(self, parent):
         LOG.debug("FilesTableView.__init__()")
         super(FilesTableView, self).__init__(parent)
@@ -134,6 +160,24 @@ class FilesTableView(QtGui.QTableView):
         model.remove_items(items)
 
     @QtCore.pyqtSlot()
+    def _go_to_xml(self):
+        items = self._get_selected_items()
+        key = items[0].key()
+        self.SIGNAL_XML_RESULTS_REQUESTED.emit(key)
+
+    @QtCore.pyqtSlot()
+    def _go_to_best_practices(self):
+        items = self._get_selected_items()
+        key = items[0].key()
+        self.SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED.emit(key)
+
+    @QtCore.pyqtSlot()
+    def _go_to_profile(self):
+        items = self._get_selected_items()
+        key = items[0].key()
+        self.SIGNAL_PROFILE_RESULTS_REQUESTED.emit(key)
+
+    @QtCore.pyqtSlot()
     def _open_file(self):
         item = next(self._get_selected_items())
         file = item.filename
@@ -141,7 +185,6 @@ class FilesTableView(QtGui.QTableView):
         LOG.debug("Launching %s...", file)
         url = QtCore.QUrl(file)
         QtGui.QDesktopServices.openUrl(url)
-
 
     def _init_menus(self):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -158,6 +201,9 @@ class FilesTableView(QtGui.QTableView):
         # Wire up signals
         self.action_remove.triggered.connect(self._remove_files)
         self.action_open.triggered.connect(self._open_file)
+        self.action_go_to_xml.triggered.connect(self._go_to_xml)
+        self.action_go_to_profile.triggered.connect(self._go_to_profile)
+        self.action_go_to_best_practices.triggered.connect(self._go_to_best_practices)
 
     def _init_delegates(self):
         self.setItemDelegateForColumn(2, BoolDelegate(self))
@@ -195,4 +241,24 @@ class FilesTableView(QtGui.QTableView):
     #     LOG.debug("FilesTableView.dragLeaveEvent()")
     #     event.accept()
 
+# Avoid circular imports
+from .ui.results import Ui_ResultsWidget
 
+
+class ResultsWidget(Ui_ResultsWidget, QtGui.QWidget):
+    def __init__(self, model, parent=None):
+        super(ResultsWidget, self).__init__(parent)
+        self.setupUi(self)
+        self._init_model(model)
+
+    def _init_model(self, model):
+        table = self.table_results
+        table.source_model = model(self)
+        table.setModel(table.source_model)
+
+    def set_results(self, fn, results):
+        self.label_filename_value.setText(fn)
+        self.label_result_value.setText(str(results.is_valid))
+
+        table = self.table_results
+        table.source_model.update(results)
