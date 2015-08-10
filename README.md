@@ -20,11 +20,13 @@ The **cutiestix** application has been developed and tested using the following:
 The following are screenshots of **cutiestix**.
 
 ### Main Window
-The following is a screenshot of the main validation window of **cutiestix**.
+The following is a screenshot of the main validation window of **cutiestix**.  
+
 ![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/develop/screenshots/mainwindow.png)
 
 ### Validation Remediation and Reports
-Users can open XML files to remediate validation errors and view validation reports (in development).
+Users can open XML files to remediate validation errors and view validation reports (in development).  
+
 ![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/develop/screenshots/menus.png)
 
 ### Terms
