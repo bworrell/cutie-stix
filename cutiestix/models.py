@@ -60,6 +60,9 @@ class IndexedModelItem(QtCore.QObject):
     def __init__(self, **kwargs):
         super(IndexedModelItem, self).__init__()
 
+        for attr in self._attrs:
+            setattr(self, attr, None)
+
         for attr, value in kwargs.iteritems():
             setattr(self, attr, value)
 
@@ -74,19 +77,8 @@ class IndexedModelItem(QtCore.QObject):
         setattr(self, attr, value)
 
 
-BestPracticeTableItem = collections.namedtuple(
-    typename="BestPracticeTableItem",
-    field_names=("filename", "title", "line", "tag", "id", "idref", "message")
-)
-
-
-class ValidationResults(object):
-    __slots__ = ("xml", "best_practices", "profile")
-
-    def __init__(self):
-        self.xml = None
-        self.best_practices = None
-        self.profile = None
+class BestPracticeResultsTableItem(IndexedModelItem):
+    _attrs = ("title", "line", "tag", "id", "idref", "message")
 
 
 class ValidateTableItem(IndexedModelItem):
@@ -122,26 +114,34 @@ class ValidateTableItem(IndexedModelItem):
         return item
 
 
-class _NoError:
-    line    = "N/A"
-    message = "No Errors"
+class ValidationResults(object):
+    __slots__ = ("xml", "best_practices", "profile")
+
+    def __init__(self):
+        self.xml = None
+        self.best_practices = None
+        self.profile = None
 
 
 class ValidationResultsTableModel(QtCore.QAbstractTableModel):
     COLUMNS = ("Line Number", "Error")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
+    class NoError:
+        line    = "N/A"
+        message = "No Errors"
+
     def __init__(self, parent):
         super(ValidationResultsTableModel, self).__init__(parent)
-        self._data = [_NoError]
+        self._data = [self.NoError]
 
     def update(self, results):
         self.beginResetModel()
 
         if results is None:
-            self._data = [_NoError]
+            self._data = [self.NoError]
         elif not results.errors:
-            self._data = [_NoError]
+            self._data = [self.NoError]
         else:
             self._data = results.errors
 
@@ -189,62 +189,67 @@ class ValidationResultsTableModel(QtCore.QAbstractTableModel):
 
 class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
     COLUMNS = ("Title", "Line", "Tag", "@id", "@idref", "Error")
-    COL_INDEXES = dict(enumerate(COLUMNS))
+    COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
-    def __init__(self, parent, data=None):
+    def __init__(self, parent):
         super(BestPracticeResultsTableModel, self).__init__(parent)
-        self._data = self._parse_data(data)
+        self._data = []
 
-    def _parse_data(self, data):
-        retval = []
+    def _parse_results(self, results):
+        data = []
 
-        if not data:
-            return retval
-
-        for filename, collection in data.iteritems():
+        for collection in sorted(results, key=lambda x: x.name):
             title = collection.name
+            warns = [x for x in collection]
 
-            for warn in collection:
-                item = BestPracticeTableItem(
-                    filename=filename,
-                    title=title,
-                    line=warn["line"],
-                    message=warn["message"],
-                    tag=warn["tag"],
-                    id=warn["id"],
-                    idref=warn["idref"]
-                )
+            for warn in warns:
+                warndict = {k: warn[k] for k in warn.core_keys}
+                item     = BestPracticeResultsTableItem(title=title, **warndict)
+                data.append(item)
 
-                retval.append(item)
+        return data
 
-        return retval
+    def update(self, results):
+        self.beginResetModel()
+
+        if results is None:
+            self._data = []
+        elif not results.errors:
+            self._data = []
+        else:
+            self._data = self._parse_results(results)
+
+        self.endResetModel()
+
+    def clear(self):
+        self.update(None)
 
     def rowCount(self, index=None):
         return len(self._data)
 
     def columnCount(self, index=None):
-        return len(self.COL_NAMES)
+        return len(self.COLUMNS)
 
-    def data(self, index, int_role=None):
+    def data(self, index, role=None):
         if not index.isValid():
             return None
 
         row = index.row()
         col = index.column()
 
-        if int_role == Qt.DisplayRole:
+        if role == Qt.DisplayRole:
             return self._data[row][col]
 
         return None
 
-    def headerData(self, column, orientation, int_role=None):
-        if int_role != Qt.DisplayRole:
+    def headerData(self, column, orientation, role=None):
+        if role != Qt.DisplayRole:
             return None
 
-        if orientation != Qt.Horizontal:
-            return None
-
-        return self.COL_INDEXES[column]
+        if orientation == Qt.Horizontal:
+            return self.COLUMN_INDEXES[column]
+        elif orientation == Qt.Vertical:
+            return column + 1
 
 
 class ValidateTableModel(QtCore.QAbstractTableModel):

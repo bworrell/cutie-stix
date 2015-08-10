@@ -41,6 +41,11 @@ class ResultsTableView(QtGui.QTableView):
         self.setAlternatingRowColors(True)
         self.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
 
+    def resize_columns(self):
+        self.resizeColumnsToContents()
+        h_header = self.horizontalHeader()
+        h_header.setStretchLastSection(True)
+
     def _init_headers(self):
         h_header = self.horizontalHeader()
         h_header.setResizeMode(QtGui.QHeaderView.Interactive)
@@ -250,6 +255,13 @@ class ResultsWidget(Ui_ResultsWidget, QtGui.QWidget):
         super(ResultsWidget, self).__init__(parent)
         self.setupUi(self)
         self._init_model(model)
+        self._connect_signals()
+
+
+    def _connect_signals(self):
+        table  = self.table_results
+        model = table.source_model
+        model.modelReset.connect(table.resize_columns)
 
     def _init_model(self, model):
         table = self.table_results

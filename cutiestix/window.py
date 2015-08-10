@@ -93,7 +93,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # Used for displaying results
         self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
         self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
-        # self._result_tabs['best_practices'] = widgets.ResultsWidget()
+        self._result_tabs['best_practices'] = widgets.ResultsWidget(models.BestPracticeResultsTableModel)
 
     @QtCore.pyqtSlot()
     def _show_about(self):
@@ -335,10 +335,24 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             LOG.error("Error retrieving profile validation results: %s", str(ex))
 
 
+    def _populate_best_practices_results(self, item):
+        tab = self._result_tabs.get('best_practices')
+        tab.set_results(item.filename, item.results.best_practices)
+
+        if self.tab_widget.indexOf(tab) == -1:
+            self.tab_widget.addTab(tab, "Best Practices Results")
+
+        self.tab_widget.setCurrentWidget(tab)
+
     @QtCore.pyqtSlot(str)
     def _handle_best_practices_results_requested(self, itemid):
         model = self.table_files.source_model
         item  = model.lookup(str(itemid))
+
+        try:
+            self._populate_best_practices_results(item)
+        except AttributeError as ex:
+            LOG.error("Error retrieving best pracitces validation results: %s", str(ex))
 
     def update_status(self, msg):
         self.status.setText(msg)
