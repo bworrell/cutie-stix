@@ -16,7 +16,7 @@ The **cutiestix** application has been developed and tested using the following:
 
 **Note:** I have seen some integer overflow issues between universal (32/64bit) Python builds on OSX and 64bit Qt/PyQt. Your best bet is to stick with 32bit everything.
 
-## Look And Feel
+## Look and Feel
 The following are screenshots of **cutiestix**.
 
 ### Main Window
