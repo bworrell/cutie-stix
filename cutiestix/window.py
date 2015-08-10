@@ -54,11 +54,6 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # widget.
         self._handle_file_table_model_changed()
 
-        # Used for displaying results
-        self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
-        self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
-        # self._result_tabs['best_practices'] = widgets.ResultsWidget()
-
     def _connect_ui(self):
         # Buttons in the main window
         self.btn_validate.clicked.connect(self._handle_btn_validate_clicked)
@@ -90,6 +85,16 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         pstate = self.check_profile.stateChanged
         pstate.connect(self._handle_check_profile_state_changed)
 
+    def _reset_result_tabs(self):
+        for tab in self._result_tabs.itervalues():
+            idx = self.tab_widget.indexOf(tab)
+            self.tab_widget.removeTab(idx)
+
+        # Used for displaying results
+        self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
+        self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
+        # self._result_tabs['best_practices'] = widgets.ResultsWidget()
+
     @QtCore.pyqtSlot()
     def _show_about(self):
         about = widgets.AboutDialog(self)
@@ -102,6 +107,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
         if size == 0:
             self.stacked_main.setCurrentIndex(INDEX_ADD_FILES)
+            self._reset_result_tabs()
             self.update_status("No Files Added.")
         else:
             self.stacked_main.setCurrentIndex(INDEX_VIEW_FILES)
