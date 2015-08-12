@@ -20,12 +20,12 @@ The **cutiestix** application has been developed and tested using the following:
 The following are screenshots of **cutiestix**.
 
 ### Main Window
-The following is a screenshot of the main validation window of **cutiestix**.  
+The following is a screenshot of the **cutiestix** main window during a batch validation task.  
 
-![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/mainwindow.png)
+![Main Window](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/mainwindow_during.png)
 
-### Validation Remediation and Reports
-Users can open XML files to remediate validation errors and view validation reports (in development).  
+### Validation Error Reports
+Users can view XML, STIX Best Practices, and STIX Profile validation error reports.
 
 ![Menus](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/menus.png)
 
@@ -33,6 +33,13 @@ Users can open XML files to remediate validation errors and view validation repo
 Tabbed interface to separate validation reports.  
 
 ![Tabs] (https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/tabs.png)
+
+### STIX Profile Transformation
+Users can transform STIX Profiles (Excel documents) into XSLT or Schematron documents via the `Transform` menu options.
+
+![Menus](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/transform.png)
+
+
 
 ### Terms
 This was developed as a way to mess around with PyQt. Use at your own risk! See LICENSE file for complete terms.
