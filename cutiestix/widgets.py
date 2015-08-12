@@ -6,8 +6,10 @@ from PyQt4.QtCore import Qt
 from . import LICENSE
 from . import version
 from . import models
+from . import worker
 from .delegates import BoolDelegate, ResultsDelegate
-from .ui.about import Ui_DialogAbout
+from .ui.about import Ui_AboutDialog
+from .ui.transform import Ui_TransformDialog
 
 
 LOG = logging.getLogger(__name__)
@@ -52,7 +54,7 @@ class ResultsTableView(QtGui.QTableView):
         h_header.setStretchLastSection(True)
 
 
-class AboutDialog(Ui_DialogAbout, QtGui.QDialog):
+class AboutDialog(Ui_AboutDialog, QtGui.QDialog):
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
@@ -274,3 +276,63 @@ class ResultsWidget(Ui_ResultsWidget, QtGui.QWidget):
 
         table = self.table_results
         table.source_model.update(results)
+
+
+class _TransformDialog(Ui_TransformDialog, QtGui.QDialog):
+    _transformer = None
+
+    TRANSFORM_SCHEMATRON = 0x01
+    TRANSFORM_XSLT       = 0x02
+
+    def __init__(self, worker, parent=None):
+        super(_TransformDialog, self).__init__(parent)
+        self.setupUi(self)
+
+        self._worker = worker
+        self._thread = None
+        self._connect_worker()
+
+        # Make sure the user can't click outside of this dialog while it's
+        # running.
+        self.setModal(True)
+
+    def _connect_worker(self):
+        type_  = self._transformer
+        worker = self._worker
+        thread = QtCore.QThread()
+
+        # Connect the cancel button to our thread
+        self.btn_cancel.clicked.connect(thread.quit)
+
+        if type_ == self.TRANSFORM_SCHEMATRON:
+            thread.started.connect(worker.to_schematron)
+        elif type_ == self.TRANSFORM_XSLT:
+            thread.started.connect(worker.to_xslt)
+        else:
+            raise ValueError("Unknown transformer type: %s" % self._transformer)
+
+        worker.SIGNAL_FINISHED.connect(thread.quit)
+        worker.SIGNAL_FINISHED.connect(self.close)
+        worker.moveToThread(thread)
+
+        # Do this so the worker and thread don't get garbage collected
+        self._thread = thread
+        self._worker = worker
+
+    def start_transform(self):
+        thread = self._thread
+        worker = self._worker
+
+        if not thread and worker:
+            raise RuntimeError("Cannot start(). Worker thread not initialized.")
+
+        self._thread.start()
+
+
+class SchematronTransformDialog(_TransformDialog):
+    _transformer = _TransformDialog.TRANSFORM_SCHEMATRON
+
+class XsltTransformDialog(_TransformDialog):
+    _transformer = _TransformDialog.TRANSFORM_XSLT
+
+

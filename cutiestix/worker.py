@@ -82,3 +82,41 @@ class ValidationWorker(QtCore.QObject):
 
         LOG.debug("validate() done!")
         self.SIGNAL_FINISHED.emit()
+
+
+class TransformWorker(QtCore.QObject):
+    SIGNAL_FINISHED  = QtCore.pyqtSignal()
+    SIGNAL_EXCEPTION = QtCore.pyqtSignal()
+
+    def __init__(self, infile, outfile, parent=None):
+        super(TransformWorker, self).__init__(parent)
+        self._profile = infile
+        self._outfile = outfile
+
+    def _write_out(self, tree):
+        tree.write(
+            self._outfile,
+            pretty_print=True,
+            xml_declaration=True,
+            encoding="UTF-8"
+        )
+
+    def to_schematron(self):
+        try:
+            schematron = sdv.profile_to_schematron(self._profile)
+            self._write_out(schematron)
+        except Exception as ex:
+            self.SIGNAL_EXCEPTION.emit(ex)
+        finally:
+            self.SIGNAL_FINISHED.emit()
+
+    def to_xslt(self):
+        try:
+            xslt = sdv.profile_to_xslt(self._profile)
+            self._write_out(xslt)
+        except Exception as ex:
+            self.SIGNAL_EXCEPTION.emit(ex)
+        finally:
+            self.SIGNAL_FINISHED.emit()
+
+

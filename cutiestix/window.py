@@ -23,6 +23,8 @@ HEIGHT = 768
 INDEX_ADD_FILES  = 0
 INDEX_VIEW_FILES = 1
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -65,6 +67,8 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         self.action_set_schema_dir.triggered.connect(self._handle_set_schema_dir)
         self.action_set_stix_profile.triggered.connect(self._handle_set_profile)
         self.action_about.triggered.connect(self._show_about)
+        self.action_profile_to_schematron.triggered.connect(self._handle_to_schematron)
+        self.action_profile_to_xslt.triggered.connect(self._handle_to_xslt)
 
         # Validate file table
         model = self.table_files.source_model
@@ -134,7 +138,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             parent=self,
             caption="Add STIX Files",
             filter="XML (*.xml)",
-            directory=__file__,
+            directory=BASE_DIR,
         )
 
         filenames = [str(f) for f in files]
@@ -147,7 +151,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         xmldir = QtGui.QFileDialog.getExistingDirectory(
             parent=self,
             caption="Select STIX Document Directory",
-            directory=__file__,
+            directory=BASE_DIR,
         )
 
         if not xmldir:
@@ -163,7 +167,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         schemadir = QtGui.QFileDialog.getExistingDirectory(
             parent=self,
             caption="Set Schema Directory",
-            directory=__file__,
+            directory=BASE_DIR,
         )
 
         if not schemadir:
@@ -182,7 +186,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             parent=self,
             caption="Select STIX Profile",
             filter="Excel (*.xlsx)",
-            directory=__file__,
+            directory=BASE_DIR,
         )
 
         if not profile:
@@ -353,6 +357,53 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             self._populate_best_practices_results(item)
         except AttributeError as ex:
             LOG.error("Error retrieving best pracitces validation results: %s", str(ex))
+
+    def _handle_transform(self, klass, ext):
+        infile = QtGui.QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Select Profile...",
+            filter="Excel (*.xlsx)",
+            directory=BASE_DIR,
+        )
+
+        if not infile:
+            LOG.debug("User cancelled out of profile selection.")
+            return
+
+        outfile = QtGui.QFileDialog.getSaveFileName(
+            parent=self,
+            caption="Save Transform As...",
+            directory=BASE_DIR,
+        )
+
+        if not outfile:
+            LOG.debug("User cancelled out of save file.")
+            return
+
+        outfile = str(outfile)
+        infile  = str(infile)
+
+        if not outfile.lower().endswith(ext):
+            outfile += ext
+
+        transformer = worker.TransformWorker(infile=infile, outfile=outfile)
+        dialog = klass(worker=transformer, parent=self)
+
+        self.update_status("Transforming Profile...")
+
+        dialog.show()
+        dialog.start_transform()
+        dialog.exec_()
+
+        self.update_status("Profile Transform Complete.")
+
+    @QtCore.pyqtSlot()
+    def _handle_to_xslt(self):
+         self._handle_transform(klass=widgets.XsltTransformDialog, ext=".xslt")
+
+    @QtCore.pyqtSlot()
+    def _handle_to_schematron(self):
+        self._handle_transform(klass=widgets.SchematronTransformDialog, ext=".sch")
 
     def update_status(self, msg):
         self.status.setText(msg)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1523</width>
-    <height>576</height>
+    <width>1402</width>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -386,7 +386,7 @@ position: center center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1523</width>
+     <width>1402</width>
      <height>21</height>
     </rect>
    </property>
@@ -396,6 +396,8 @@ position: center center;</string>
     </property>
     <addaction name="action_add_file"/>
     <addaction name="action_add_directory"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
@@ -423,8 +425,16 @@ position: center center;</string>
     <addaction name="menu_stix_profile"/>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menu_transform">
+    <property name="title">
+     <string>Transform</string>
+    </property>
+    <addaction name="action_profile_to_schematron"/>
+    <addaction name="action_profile_to_xslt"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_options"/>
+   <addaction name="menu_transform"/>
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar">
@@ -531,6 +541,24 @@ position: center center;</string>
   <action name="actionSettings">
    <property name="text">
     <string>Settings...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_profile_to_schematron">
+   <property name="text">
+    <string>Profile To Schematron...</string>
+   </property>
+  </action>
+  <action name="action_profile_to_xslt">
+   <property name="text">
+    <string>Profile To XSLT...</string>
    </property>
   </action>
  </widget>
