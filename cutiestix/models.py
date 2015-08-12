@@ -473,7 +473,7 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
 class BoolListModel(QtCore.QAbstractListModel):
     def __init__(self, parent=None):
         super(BoolListModel, self).__init__(parent)
-        self._data = ("True", "False")
+        self._data = (True, False)
 
     def rowCount(self, index=None):
         return 2

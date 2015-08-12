@@ -1,22 +1,29 @@
-"""View delegates."""
-
-# stdlib
-import logging
+"""
+This module contains Qt Delegates which define how to render or present
+View data.
+"""
 
 # external
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
 
 # internal
 from . import utils
 
 
-LOG = logging.getLogger(__name__)
-
-
 class ResultsDelegate(QtGui.QStyledItemDelegate):
-    def displayText(self, value, locale=None):
+    """A validation result delegate.
 
+    This is used to render the stix-validator ValidationResults object which
+    is attached to model items during validation.
+
+    If an exception occurred during validition, the word "Error" will be
+    presented.
+    """
+
+    def displayText(self, value, locale=None):
+        """Return the text to display for a stix-validator ValidationResults
+        object that is attached to a model item after validation..
+        """
         if value is None:
             return ""
 
@@ -33,18 +40,11 @@ class ResultsDelegate(QtGui.QStyledItemDelegate):
 
 
 class BoolDelegate(QtGui.QStyledItemDelegate):
+    """Render boolean data in a model.
+
+    By default, True will be rendered as "true" and False as "false." This
+    forces the intended capitalization.
+    """
     def displayText(self, value, locale=None):
         value = utils.str2bool(value.toPyObject())
         return super(BoolDelegate, self).displayText(str(value), locale)
-
-
-class BoolEditableDelegate(BoolDelegate):
-    def setEditorData(self, widget, index):
-        value = index.model().data(index, Qt.EditRole)
-        bool  = utils.str2bool(value)
-        idx   = 0 if bool else 1
-        widget.setCurrentIndex(idx)
-
-    def createEditor(self, parent, option, index):
-        from .widgets import BoolComboBox  # circular import
-        return BoolComboBox(parent)
