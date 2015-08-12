@@ -262,7 +262,6 @@ class Ui_MainWindow(object):
         self.menu_stix_profile.addAction(self.action_set_stix_profile)
         self.menu_options.addAction(self.menu_xml_schema.menuAction())
         self.menu_options.addAction(self.menu_stix_profile.menuAction())
-        self.menu_options.addAction(self.actionSettings)
         self.menu_transform.addAction(self.action_profile_to_schematron)
         self.menu_transform.addAction(self.action_profile_to_xslt)
         self.menubar.addAction(self.menu_file.menuAction())

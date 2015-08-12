@@ -423,7 +423,6 @@ position: center center;</string>
     </widget>
     <addaction name="menu_xml_schema"/>
     <addaction name="menu_stix_profile"/>
-    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menu_transform">
     <property name="title">
