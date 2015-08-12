@@ -1,1 +1,3 @@
-__author__ = 'bworrell'
+"""
+The cutiestix.ui package contains code that
+"""

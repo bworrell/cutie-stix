@@ -1,4 +1,4 @@
-# builtin
+# stdlib
 import os
 import logging
 
@@ -383,7 +383,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
         outfile = str(outfile)
         infile  = str(infile)
-        
+
         transformer = worker.TransformWorker(infile=infile, outfile=outfile)
         dialog = klass(worker=transformer, parent=self)
 

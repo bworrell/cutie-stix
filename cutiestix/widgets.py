@@ -1,12 +1,14 @@
+# stdlib
 import logging
 
+# external
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
+# internal
 from . import LICENSE
 from . import version
 from . import models
-from . import worker
 from .delegates import BoolDelegate, ResultsDelegate
 from .ui.about import Ui_AboutDialog
 from .ui.transform import Ui_TransformDialog
@@ -73,10 +75,6 @@ class AboutDialog(Ui_AboutDialog, QtGui.QDialog):
         # Set version info
         self.label_api_version_value.setText(sdv.__version__)
         self.label_version_value.setText(version.__version__)
-
-
-class BestPracticeTableView(QtGui.QTableView):
-    pass
 
 
 class BoolComboBox(QtGui.QComboBox):
@@ -220,33 +218,6 @@ class FilesTableView(QtGui.QTableView):
     def clear(self):
         self.source_model.clear()
 
-    # Dragging files into the view doesn't work because of:
-    # https://bugreports.qt.io/browse/QTBUG-40449
-    # def dropEvent(self, event):
-    #     LOG.debug("Caught dropEvent!")
-    #     mdata = event.mimeData()
-    #
-    #     # filenames = [str(url.toLocalFile()) for url in mdata.urls()]
-    #     #
-    #     # for fn in filenames:
-    #     #     printfile(fn)
-    #     #
-    #     #
-    #     # LOG.debug(mdata.text())
-    #     # LOG.debug(", ".join(str(x.path()) for x in mdata.urls()))
-    #
-    #
-    # def dragEnterEvent(self, event):
-    #     LOG.debug("FilesTableView.dragEnterEvent()")
-    #     event.acceptProposedAction()
-    #
-    # def dragMoveEvent(self, event):
-    #     LOG.debug("FilesTableView.dragMoveEvent()")
-    #     event.acceptProposedAction()
-    #
-    # def dragLeaveEvent(self, event):
-    #     LOG.debug("FilesTableView.dragLeaveEvent()")
-    #     event.accept()
 
 # Avoid circular imports
 from .ui.results import Ui_ResultsWidget

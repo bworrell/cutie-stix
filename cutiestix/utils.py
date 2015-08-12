@@ -1,7 +1,7 @@
 # stdlib
-import os.path
+import os
 
-# stix-validator
+# external
 import sdv.utils
 import sdv.validators.stix.common as stix_utils
 
@@ -49,7 +49,7 @@ def str2bool(s):
 
 def home():
     """Return the path to the home directory of the current user."""
-    return os.path.expanduser("~")  # TODO: Make sure this works on Windows
+    return os.path.expanduser("~")
 
 
 def is_stix(fn):

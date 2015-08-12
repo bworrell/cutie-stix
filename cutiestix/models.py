@@ -1,6 +1,5 @@
-# builtin
+# stdlib
 import os
-import collections
 import logging
 
 # external

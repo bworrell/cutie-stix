@@ -1,11 +1,15 @@
 """View delegates."""
 
+# stdlib
 import logging
 
+# external
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
+# internal
 from . import utils
+
 
 LOG = logging.getLogger(__name__)
 

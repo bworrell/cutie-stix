@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright (c) 2015 - Bryan Worrell
+# For license information, see the LICENSE file
 import os
 import setuptools
 

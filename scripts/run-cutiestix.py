@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # stdlib
 import sys
 import logging
@@ -26,7 +28,7 @@ def _get_argparser():
 
     parser.add_argument(
         "--log-level",
-        default="DEBUG",
+        default="INFO",
         help="The logging output level.",
         choices=["DEBUG", "INFO", "WARN", "ERROR"]
     )
