@@ -358,7 +358,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         except AttributeError as ex:
             LOG.error("Error retrieving best pracitces validation results: %s", str(ex))
 
-    def _handle_transform(self, klass, ext):
+    def _handle_transform(self, klass, filter):
         infile = QtGui.QFileDialog.getOpenFileName(
             parent=self,
             caption="Select Profile...",
@@ -373,6 +373,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         outfile = QtGui.QFileDialog.getSaveFileName(
             parent=self,
             caption="Save Transform As...",
+            filter=filter,
             directory=BASE_DIR,
         )
 
@@ -382,10 +383,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
         outfile = str(outfile)
         infile  = str(infile)
-
-        if not outfile.lower().endswith(ext):
-            outfile += ext
-
+        
         transformer = worker.TransformWorker(infile=infile, outfile=outfile)
         dialog = klass(worker=transformer, parent=self)
 
@@ -399,11 +397,13 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_to_xslt(self):
-         self._handle_transform(klass=widgets.XsltTransformDialog, ext=".xslt")
+        filter = "XSLT (*.xslt)"
+        self._handle_transform(klass=widgets.XsltTransformDialog, filter=filter)
 
     @QtCore.pyqtSlot()
     def _handle_to_schematron(self):
-        self._handle_transform(klass=widgets.SchematronTransformDialog, ext=".sch")
+        filter = "Schematron (*.sch)"
+        self._handle_transform(klass=widgets.SchematronTransformDialog, filter=filter)
 
     def update_status(self, msg):
         self.status.setText(msg)
