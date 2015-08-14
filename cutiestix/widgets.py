@@ -38,8 +38,9 @@ class XmlDropMixin(QtCore.QObject):
         All classes which utilize this mixin MUST define a
         SIGNAL_FILES_ADDED(list) signal.
 
-    I wanted this to have a signal, but PyQt doesn't seem to like mixins
-    owning signals.
+    I was hoping to have this class own the signal, but PyQt doesn't seem
+    to like mixins owning the signal, so sublasses must redefine the same
+    signal.
     """
 
     SIGNAL_FILES_ADDED = QtCore.pyqtSignal(list)

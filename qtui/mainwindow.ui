@@ -397,7 +397,7 @@ position: center center;</string>
     <addaction name="action_add_file"/>
     <addaction name="action_add_directory"/>
     <addaction name="separator"/>
-    <addaction name="actionQuit"/>
+    <addaction name="action_quit"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
@@ -542,7 +542,7 @@ position: center center;</string>
     <string>Settings...</string>
    </property>
   </action>
-  <action name="actionQuit">
+  <action name="action_quit">
    <property name="text">
     <string>&amp;Quit</string>
    </property>

@@ -69,6 +69,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         self.action_about.triggered.connect(self._show_about)
         self.action_profile_to_schematron.triggered.connect(self._handle_to_schematron)
         self.action_profile_to_xslt.triggered.connect(self._handle_to_xslt)
+        self.action_quit.triggered.connect(self.close)
 
         # Validate file table
         model = self.table_files.source_model
