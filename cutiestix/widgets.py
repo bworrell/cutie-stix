@@ -18,7 +18,7 @@ LOG = logging.getLogger(__name__)
 
 
 def center(widget):
-    """Centers the widget on the screen."""
+    """Centers a widget on the screen."""
     screen = QtGui.QDesktopWidget().screenGeometry()
     me = widget.geometry()
 
