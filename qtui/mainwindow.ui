@@ -79,9 +79,9 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
-            <widget class="QWidget" name="page_add_files">
+            <widget class="XmlFileDropWidget" name="page_add_files">
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -228,7 +228,7 @@ position: center center;</string>
                       <enum>QAbstractItemView::DropOnly</enum>
                      </property>
                      <attribute name="horizontalHeaderVisible">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </attribute>
                     </widget>
                    </item>
@@ -570,6 +570,12 @@ position: center center;</string>
   <customwidget>
    <class>MainTabView</class>
    <extends>QTabWidget</extends>
+   <header>cutiestix/widgets.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XmlFileDropWidget</class>
+   <extends>QWidget</extends>
    <header>cutiestix/widgets.h</header>
    <container>1</container>
   </customwidget>

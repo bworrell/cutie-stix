@@ -1,4 +1,5 @@
 # stdlib
+import os
 import logging
 
 # external
@@ -27,6 +28,68 @@ def center(widget):
     ypos = (screen.height() - me.height()) / 2
 
     widget.move(xpos, ypos)
+
+
+class XmlDropMixin(QtCore.QObject):
+    """A pseudo-mixin class that contains the logic required for handling
+    file drop events.
+
+    Note:
+        All classes which utilize this mixin MUST define a
+        SIGNAL_FILES_ADDED(list) signal.
+
+    I wanted this to have a signal, but PyQt doesn't seem to like mixins
+    owning signals.
+    """
+
+    SIGNAL_FILES_ADDED = QtCore.pyqtSignal(list)
+
+    def __init__(self, parent=None):
+        QtCore.QObject.__init__(self, parent)
+
+    def _emit(self, files):
+        """This is a bit of a hack to make multiple-inheritance work in PyQt.
+
+        See also:
+            http://trevorius.com/scrapbook/python/pyqt-multiple-inheritance/
+
+        """
+        self.SIGNAL_FILES_ADDED.emit(files)
+
+    def dropEvent(self, event):
+        """Catch the drop event and let observers know that we've
+        got some files for them do deal with.
+
+        Note:
+            This does not work on OSX due to a bug in Qt, so we check the
+            platform before emitting.
+        """
+        LOG.debug("Caught dropEvent!")
+        mdata = event.mimeData()
+        files = [str(url.toLocalFile()) for url in mdata.urls()]
+        files = [path for path in files if os.path.exists(path)]
+
+        self._emit(files)
+
+    def dragEnterEvent(self, event):
+        LOG.debug("FilesTableView.dragEnterEvent()")
+        event.acceptProposedAction()
+
+    def dragMoveEvent(self, event):
+        LOG.debug("FilesTableView.dragMoveEvent()")
+        event.acceptProposedAction()
+
+    def dragLeaveEvent(self, event):
+        LOG.debug("FilesTableView.dragLeaveEvent()")
+        event.accept()
+
+
+class XmlFileDropWidget(QtGui.QWidget, XmlDropMixin):
+    SIGNAL_FILES_ADDED = QtCore.pyqtSignal(list)
+
+    def __init__(self, parent=None):
+        super(XmlFileDropWidget, self).__init__(parent)
+        self.setAcceptDrops(True)
 
 
 class MainTabView(QtGui.QTabWidget):
@@ -84,10 +147,11 @@ class BoolComboBox(QtGui.QComboBox):
         self.setEditable(False)
 
 
-class FilesTableView(QtGui.QTableView):
+class FilesTableView(QtGui.QTableView, XmlDropMixin):
     SIGNAL_XML_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
     SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
     SIGNAL_PROFILE_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
+    SIGNAL_FILES_ADDED = QtCore.pyqtSignal(list)
 
     def __init__(self, parent):
         LOG.debug("FilesTableView.__init__()")
@@ -188,7 +252,7 @@ class FilesTableView(QtGui.QTableView):
         file = item.filename
 
         LOG.debug("Launching %s...", file)
-        url = QtCore.QUrl(file)
+        url = QtCore.QUrl.fromLocalFile(file)
         QtGui.QDesktopServices.openUrl(url)
 
     def _init_menus(self):

@@ -66,7 +66,7 @@ class Ui_MainWindow(object):
         self.stacked_main = QtGui.QStackedWidget(self.tab_files)
         self.stacked_main.setMinimumSize(QtCore.QSize(100, 100))
         self.stacked_main.setObjectName(_fromUtf8("stacked_main"))
-        self.page_add_files = QtGui.QWidget()
+        self.page_add_files = XmlFileDropWidget()
         self.page_add_files.setObjectName(_fromUtf8("page_add_files"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.page_add_files)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
@@ -123,7 +123,7 @@ class Ui_MainWindow(object):
         self.table_files.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_files.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
         self.table_files.setObjectName(_fromUtf8("table_files"))
-        self.table_files.horizontalHeader().setVisible(True)
+        self.table_files.horizontalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.table_files)
         self.horizontalLayout.addWidget(self.group_files)
         self.v_layout_right = QtGui.QVBoxLayout()
@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab_widget.setCurrentIndex(0)
-        self.stacked_main.setCurrentIndex(1)
+        self.stacked_main.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -315,5 +315,5 @@ class Ui_MainWindow(object):
         self.action_profile_to_schematron.setText(_translate("MainWindow", "Profile To Schematron...", None))
         self.action_profile_to_xslt.setText(_translate("MainWindow", "Profile To XSLT...", None))
 
-from cutiestix.widgets import FilesTableView, MainTabView
+from cutiestix.widgets import FilesTableView, MainTabView, XmlFileDropWidget
 import images_rc

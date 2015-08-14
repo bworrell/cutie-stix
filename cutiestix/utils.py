@@ -64,6 +64,12 @@ def is_stix(fn):
         return False
 
 
-def list_xml_files(dirname):
-    files = sdv.utils.list_xml_files(dirname, recursive=True)
-    return files
+def is_iterable(x):
+    return hasattr(x, "__iter__")
+
+
+def list_xml_files(files):
+    if not is_iterable(files):
+        files = [files]
+
+    return sdv.utils.get_xml_files(files, recursive=True)

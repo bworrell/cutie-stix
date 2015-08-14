@@ -80,6 +80,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         table.SIGNAL_XML_RESULTS_REQUESTED.connect(self._handle_xml_results_requested)
         table.SIGNAL_PROFILE_RESULTS_REQUESTED.connect(self._handle_profile_results_requested)
         table.SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED.connect(self._handle_best_practices_results_requested)
+        table.SIGNAL_FILES_ADDED.connect(self._add_files)
 
         # Main Options
         bpstate = self.check_best_practices.stateChanged
@@ -88,6 +89,9 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         exschema.connect(self._handle_check_external_schemas_state_changed)
         pstate = self.check_profile.stateChanged
         pstate.connect(self._handle_check_profile_state_changed)
+
+        # Add Files landing screen.
+        self.page_add_files.SIGNAL_FILES_ADDED.connect(self._add_files)
 
     def _reset_result_tabs(self):
         for tab in self._result_tabs.itervalues():
@@ -117,18 +121,18 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             self.stacked_main.setCurrentIndex(INDEX_VIEW_FILES)
             self.update_status("Ready.")
 
-    def _add_files(self, filenames):
-        stixdocs  = [f for f in filenames if utils.is_stix(f)]
-        nonstix   = [f for f in filenames if f not in stixdocs]
-
-        LOG.debug("Adding: %s", stixdocs)
-        model = self.table_files.source_model
+    @QtCore.pyqtSlot(list)
+    def _add_files(self, files):
+        xmlfiles  = utils.list_xml_files(files)
+        stixdocs  = [f for f in xmlfiles if utils.is_stix(f)]
+        nonstix   = [f for f in xmlfiles if f not in stixdocs]
+        model     = self.table_files.source_model
 
         for file in stixdocs:
             model.add(file)
 
-        if nonstix:
-            LOG.warn("Skipping non-STIX files: %s", nonstix)
+        LOG.debug("Added STIX files: %s", stixdocs)
+        LOG.debug("Skipped non-STIX files: %s", nonstix)
 
     @QtCore.pyqtSlot()
     def _handle_add_files(self):
@@ -154,11 +158,12 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             directory=BASE_DIR,
         )
 
+        xmldir = str(xmldir)
+
         if not xmldir:
             LOG.debug("User cancelled out of xml directory selection")
         else:
-            xml_files = utils.list_xml_files(str(xmldir))
-            self._add_files(xml_files)
+            self._add_files(xmldir)
 
     @QtCore.pyqtSlot()
     def _handle_set_schema_dir(self):
