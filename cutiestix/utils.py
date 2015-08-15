@@ -5,7 +5,10 @@ Helper utilities that have use throughout the cutiestix codebase.
 # stdlib
 import os
 
-# external
+# lxml
+from lxml import etree
+
+# stix-validator
 import sdv.utils
 import sdv.validators.stix.common as stix_utils
 
@@ -60,10 +63,11 @@ def is_stix(fn):
     """Attempts to determine if the input `doc` is a STIX XML instance document.
     If the root-level element falls under a namespace which starts with
     ``http://stix.mitre.org``, this will return True.
-
     """
     try:
-        return sdv.utils.is_stix(fn)
+        context = etree.iterparse(fn, events=("start",))
+        _, root = next(context)
+        return sdv.utils.is_stix(root)
     except Exception:
         return False
 
