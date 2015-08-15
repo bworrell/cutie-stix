@@ -6,7 +6,7 @@ import setuptools
 
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 VERSION_FILE = os.path.join(BASE_DIR, "cutiestix", 'version.py')
-README_FILE  = os.path.join(BASE_DIR, "README.rst")
+README_FILE  = os.path.join(BASE_DIR, "README.md")
 
 
 def normalize(version):
