@@ -1,3 +1,7 @@
+"""
+Helper utilities that have use throughout the cutiestix codebase.
+"""
+
 # stdlib
 import os
 
@@ -65,10 +69,23 @@ def is_stix(fn):
 
 
 def is_iterable(x):
+    """Returhs True if `x` is iterable.
+
+    Note:
+        This won't work in Python 3 since strings have __iter__ there.
+    """
     return hasattr(x, "__iter__")
 
 
 def list_xml_files(files):
+    """Filter the input files and return only the XML file paths.
+
+    Args:
+        files: A filename, dirname, or list of filenames/dirnames.
+
+    Returns:
+        A list of XML filenames.
+    """
     if not is_iterable(files):
         files = [files]
 

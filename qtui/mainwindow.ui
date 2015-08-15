@@ -79,7 +79,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="XmlFileDropWidget" name="page_add_files">
              <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -228,7 +228,7 @@ position: center center;</string>
                       <enum>QAbstractItemView::DropOnly</enum>
                      </property>
                      <attribute name="horizontalHeaderVisible">
-                      <bool>false</bool>
+                      <bool>true</bool>
                      </attribute>
                     </widget>
                    </item>
