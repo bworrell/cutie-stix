@@ -1,3 +1,7 @@
+"""
+This module contains custom Qt widgets and widget-related helper functions.
+"""
+
 # stdlib
 import os
 import logging
@@ -22,7 +26,7 @@ LOG = logging.getLogger(__name__)
 
 
 def center(widget):
-    """Centers a widget on the screen."""
+    """Center the `widget` on the screen."""
     screen = QtGui.QDesktopWidget().screenGeometry()
     me = widget.geometry()
 

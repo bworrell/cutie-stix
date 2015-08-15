@@ -17,12 +17,14 @@ from cutiestix import window
 LOG = logging.getLogger(__name__)
 
 
-def init_logging(lvl=logging.DEBUG):
+def init_logging(level=logging.DEBUG):
+    """Initialize Python logging."""
     fmt = "[%(asctime)s] [%(levelname)s] %(message)s"
-    logging.basicConfig(level=lvl, format=fmt)
+    logging.basicConfig(level=level, format=fmt)
 
 
 def _get_argparser():
+    """Create and return an ArgumentParser for this application."""
     desc = "cutiestix v%s" % (version.__version__)
     parser = argparse.ArgumentParser(description=desc)
 
