@@ -209,8 +209,13 @@ class FilesTableView(QtGui.QTableView, XmlDropMixin):
         self._init_delegates()
         self._init_headers()
         self._connect_signals()
+
+        # Misc properties
+        self.setWordWrap(False)
+        self.setTextElideMode(Qt.ElideRight)
         self.setAlternatingRowColors(True)
         self.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+
 
     def _init_headers(self):
         h_header = self.horizontalHeader()
