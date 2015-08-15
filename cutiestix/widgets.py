@@ -1,3 +1,7 @@
+"""
+This module contains custom Qt widgets and widget-related helper functions.
+"""
+
 # stdlib
 import os
 import logging
@@ -22,7 +26,7 @@ LOG = logging.getLogger(__name__)
 
 
 def center(widget):
-    """Centers a widget on the screen."""
+    """Center the `widget` on the screen."""
     screen = QtGui.QDesktopWidget().screenGeometry()
     me = widget.geometry()
 
@@ -192,7 +196,6 @@ class FilesTableView(QtGui.QTableView, XmlDropMixin):
         SIGNAL_FILES_ADDED (list): Emits a list of filenames that the user has
             attempted to drag into the table.
     """
-
     SIGNAL_XML_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
     SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
     SIGNAL_PROFILE_RESULTS_REQUESTED = QtCore.pyqtSignal(str)
@@ -265,12 +268,12 @@ class FilesTableView(QtGui.QTableView, XmlDropMixin):
         first = items[0]
         results = getattr(first, 'results', None)
         
-        if count == 1 and results is not None:
+        if count != 1 or results is None or isinstance(results, Exception):
+            show_xml = show_bp = show_profile = False
+        else:
             show_xml     = results.xml is not None
             show_bp      = results.best_practices is not None
             show_profile = results.profile is not None
-        else:
-            show_xml = show_bp = show_profile = False
 
         self.action_go_to_xml.setVisible(show_xml)
         self.action_go_to_best_practices.setVisible(show_bp)
