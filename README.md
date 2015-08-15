@@ -50,7 +50,12 @@ The following items are known issues or deficiencies with **cutiestix**:
 * Drag n' drop doesn't work in OSX. There seems to be a [bug in Qt](https://bugreports.qt.io/browse/QTBUG-40449) 
   where filenames aren't reported correctly in file drop events. I think it 
   was fixed in Qt 5 but it seems alive and well in (Py)Qt 4.8.
-  
+
+* Any non-STIX files that a user attempts to add to **cutiestix** will be 
+  silently filtered out. The UI should probably handle this better and notify
+  the user of the dropped files, but I haven't had time to work out a nice 
+  notification system that I like.
+
 * No CybOX validation. This is by design, so it'll likely never be implemented.
 
 ## Terms
