@@ -322,7 +322,7 @@ class FilesTableView(QtGui.QTableView, XmlDropMixin):
         """Launch the selected row's associated XML file in an external
         viewer.
         """
-        item = next(self._get_selected_items())
+        item = self._get_selected_items()[0]
         file = item.filename
 
         LOG.debug("Launching %s...", file)
