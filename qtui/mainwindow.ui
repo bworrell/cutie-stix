@@ -278,7 +278,7 @@ position: center center;</string>
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>225</width>
+                       <width>200</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -358,7 +358,7 @@ position: center center;</string>
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>225</width>
+                       <width>200</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -375,36 +375,7 @@ position: center center;</string>
                       <string>Options</string>
                      </property>
                      <layout class="QFormLayout" name="formLayout">
-                      <item row="1" column="0">
-                       <widget class="QCheckBox" name="check_best_practices">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Validate Best Practices</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="0">
-                       <widget class="QCheckBox" name="check_external_schemas">
-                        <property name="enabled">
-                         <bool>false</bool>
-                        </property>
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Use External Schemas</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
+                      <item row="2" column="0" colspan="2">
                        <widget class="QCheckBox" name="check_profile">
                         <property name="enabled">
                          <bool>false</bool>
@@ -417,6 +388,35 @@ position: center center;</string>
                         </property>
                         <property name="text">
                          <string>Valdiate STIX Profile</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" colspan="2">
+                       <widget class="QCheckBox" name="check_best_practices">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Validate Best Practices</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0" colspan="2">
+                       <widget class="QCheckBox" name="check_external_schemas">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Use External Schemas</string>
                         </property>
                        </widget>
                       </item>
