@@ -1,3 +1,7 @@
+"""
+This module contains code for the main window of cutiestix.
+"""
+
 # stdlib
 import os
 import logging
@@ -31,7 +35,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
-    """The main window for the application."""
+    """The main window for the application.
+
+    Slots:
+        update_status (str): Updates the status bar with the received message.
+    """
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -114,17 +122,31 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         self.page_add_files.SIGNAL_FILES_ADDED.connect(self._add_files)
 
     def _remove_results_tabs(self):
+        """Removes XML, Best Practices, and Profile results tabs from the
+        main window.
+
+        Note:
+            This will leave the main tab open.
+        """
         for tab in self._result_tabs.itervalues():
             idx = self.tab_widget.indexOf(tab)
             self.tab_widget.removeTab(idx)
 
     @QtCore.pyqtSlot()
     def _show_about(self):
+        """Display the About dialog."""
         about = widgets.AboutDialog(self)
         about.exec_()
 
     @QtCore.pyqtSlot()
     def _handle_file_table_model_changed(self):
+        """Respond to the file table model change signals.
+
+        If the table model is empty, send users back to the "Add Files.."
+        screen and update the status.
+
+        If the table model is not empty, send users to the table view.
+        """
         model = self.table_files.source_model
         size  = model.rowCount()
 
@@ -138,6 +160,13 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(list)
     def _add_files(self, files):
+        """Add entries to the file table.
+
+        Args:
+            files: A single file or list of files to add. If any of the files
+                are directories, they will be traversed and all contained
+                STIX files will be collected.
+        """
         xmlfiles  = utils.list_xml_files(files)
         stixdocs  = [f for f in xmlfiles if utils.is_stix(f)]
         nonstix   = [f for f in xmlfiles if f not in stixdocs]
@@ -151,6 +180,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_add_files(self):
+        """Handle the "Add Files.." main menu clicks."""
         LOG.debug("Adding files")
 
         files = QtGui.QFileDialog.getOpenFileNames(
@@ -165,6 +195,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_add_directory(self):
+        """Handle the "Add Directory..." main menu clicks."""
         LOG.debug("Adding directory")
 
         xmldir = QtGui.QFileDialog.getExistingDirectory(
@@ -182,6 +213,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_set_schema_dir(self):
+        """Handle the "Set Schema Directory..." main menu clicks."""
         LOG.debug("Setting schema dir")
 
         schemadir = QtGui.QFileDialog.getExistingDirectory(
@@ -200,6 +232,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_set_profile(self):
+        """Handle the "Set STIX Profile..." main menu clicks."""
         LOG.debug("Setting STIX Profile")
 
         profile = QtGui.QFileDialog.getOpenFileName(
@@ -219,6 +252,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(int)
     def _handle_check_profile_state_changed(self, state):
+        """Handle the "Profile Validate" check box check/uncheck events."""
         if state == Qt.Checked:
             enabled = True
         elif state == Qt.Unchecked:
@@ -232,6 +266,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(int)
     def _handle_check_external_schemas_state_changed(self, state):
+        """Handle the "Use External Schemas" check box check/uncheck events."""
         if state == Qt.Checked:
             enabled = True
         elif state == Qt.Unchecked:
@@ -245,6 +280,9 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(int)
     def _handle_check_best_practices_state_changed(self, state):
+        """Handle the "Best Practices Validate" check box check/uncheck
+        events.
+        """
         if state == Qt.Checked:
             enabled = True
         elif state == Qt.Unchecked:
@@ -258,23 +296,29 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def _handle_validating(self, fn):
+        """Update the status bar with the name of the file that is currently
+        being validated.
+        """
         fn = os.path.split(str(fn))[-1]
         msg = "Validating {file}...".format(file=fn)
         self.update_status(msg)
 
     @QtCore.pyqtSlot(str, float)
     def _handle_validation_updated(self, itemid, progress):
+        """Update the progress bar when a table entry is finished validating."""
         LOG.debug("%s completed. Total progress: %f", itemid, progress)
         self.progress_validation.setValue(int(progress*100))
 
     @QtCore.pyqtSlot()
     def _handle_validation_started(self):
+        """Disable ui components when validation has started."""
         self.group_actions.setEnabled(False)
         self.group_options.setEnabled(False)
         self.progress_validation.setValue(0)
 
     @QtCore.pyqtSlot()
     def _handle_validation_complete(self):
+        """Enable ui components when validation has completed."""
         LOG.debug("Validation completed.")
         self.progress_validation.setValue(100)
         self.update_status("Ready.")
@@ -282,6 +326,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         self.group_options.setEnabled(True)
 
     def _validate_files(self):
+        """Create the validation thread and start it."""
         self.thread = QtCore.QThread()
         self.worker = worker.ValidationWorker()
 
@@ -306,6 +351,8 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_btn_validate_clicked(self):
+        """Handle "Validate" button clicks."""
+
         # First, reset all the results so we don't get into a race with the
         # validation thread.
         model = self.table_files.source_model
@@ -316,10 +363,16 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_btn_clear_clicked(self):
+        """Handle "Clear" button clicks."""
         LOG.debug("handle_btn_clear_clicked()")
         self.table_files.clear()
 
     def _populate_xml_results(self, item):
+        """Populate the XML Results tab.
+
+        Args:
+            item: A ValidationTableItem from the main files table.
+        """
         tab = self._result_tabs.get('xml')
         tab.set_results(item.filename, item.results.xml)
 
@@ -330,6 +383,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def _handle_xml_results_requested(self, itemid):
+        """Handle user requests to view XML results for a table item.
+
+        Args:
+            itemid: A ValidationTableItem.key() from the main files table.
+        """
         LOG.debug("XML results requested...")
         model   = self.table_files.source_model
         item    = model.lookup(str(itemid))
@@ -340,6 +398,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             LOG.error("Error retrieving xml validation results: %s", str(ex))
 
     def _populate_profile_results(self, item):
+        """Populate the STIX Profile Results tab.
+
+        Args:
+            item: A ValidationTableItem from the main files table.
+        """
         tab = self._result_tabs.get('profile')
         tab.set_results(item.filename, item.results.profile)
 
@@ -350,6 +413,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def _handle_profile_results_requested(self, itemid):
+        """Handle user requests to view STIX Profile results for a table item.
+
+        Args:
+            itemid: A ValidationTableItem.key() from the main files table.
+        """
         model = self.table_files.source_model
         item  = model.lookup(str(itemid))
 
@@ -360,6 +428,11 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
 
     def _populate_best_practices_results(self, item):
+        """Populate the STIX Best Practices Results tab.
+
+        Args:
+            item: A ValidationTableItem from the main files table.
+        """
         tab = self._result_tabs.get('best_practices')
         tab.set_results(item.filename, item.results.best_practices)
 
@@ -370,6 +443,12 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def _handle_best_practices_results_requested(self, itemid):
+        """Handle user requests to view STIX Best Practices results for a
+        table item.
+
+        Args:
+            itemid: A ValidationTableItem.key() from the main files table.
+        """
         model = self.table_files.source_model
         item  = model.lookup(str(itemid))
 
@@ -379,6 +458,17 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
             LOG.error("Error retrieving best pracitces validation results: %s", str(ex))
 
     def _handle_transform(self, klass, filter):
+        """Handle requests to transform a STIX Profile.
+
+        Note:
+            This will open a transformer dialog and remain open until the
+            transformation has completed.
+
+        Args:
+            klass: The transformer dialog class to use (e.g.,
+                SchematronTransformDialog or XsltTransformDialog).
+            filter: The save filename filter (e.g., "XSLT (*.xslt)")
+        """
         infile = QtGui.QFileDialog.getOpenFileName(
             parent=self,
             caption="Select Profile...",
@@ -417,13 +507,21 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def _handle_to_xslt(self):
+        """Handle requests to transform at STIX Profile to XSLT."""
         filter = "XSLT (*.xslt)"
         self._handle_transform(klass=widgets.XsltTransformDialog, filter=filter)
 
     @QtCore.pyqtSlot()
     def _handle_to_schematron(self):
+        """Handle requests to transform a STIX Profile to Schematron."""
         filter = "Schematron (*.sch)"
         self._handle_transform(klass=widgets.SchematronTransformDialog, filter=filter)
 
+    @QtCore.pyqtSlot()
     def update_status(self, msg):
+        """Updates the status bar with the input `msg`.
+
+        Args:
+            msg: A status message.
+        """
         self.status.setText(msg)
