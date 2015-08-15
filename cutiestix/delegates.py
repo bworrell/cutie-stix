@@ -46,5 +46,5 @@ class BoolDelegate(QtGui.QStyledItemDelegate):
     forces the intended capitalization.
     """
     def displayText(self, value, locale=None):
-        value = utils.str2bool(value.toPyObject())
-        return super(BoolDelegate, self).displayText(str(value), locale)
+        text = str(value.toPyObject())
+        return super(BoolDelegate, self).displayText(text, locale)

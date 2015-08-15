@@ -17,7 +17,7 @@ from PyQt4.QtCore import Qt
 from . import LICENSE
 from . import version
 from . import models
-from .delegates import BoolDelegate, ResultsDelegate
+from .delegates import ResultsDelegate, BoolDelegate
 from .ui.about import Ui_AboutDialog
 from .ui.transform import Ui_TransformDialog
 
