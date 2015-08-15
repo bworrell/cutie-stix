@@ -1,3 +1,7 @@
+"""
+This module contains model code for cutiestix.
+"""
+
 # stdlib
 import os
 import logging
@@ -14,6 +18,7 @@ from . import settings
 LOG = logging.getLogger(__name__)
 
 
+# These foreground and background colors are used to denote validation status.
 VALIDATION_COLORS = {
     'exception': {
         'fg':  QtGui.QColor(Qt.white),
@@ -39,7 +44,7 @@ VALIDATION_COLORS = {
             'bg': QtGui.QColor(Qt.magenta)
         }
     },
-     'profile': {
+    'profile': {
         True: {
             'fg': QtGui.QColor(Qt.darkBlue),
             'bg': QtGui.QColor(Qt.cyan)
@@ -53,41 +58,94 @@ VALIDATION_COLORS = {
 }
 
 
-class IndexedModelItem(QtCore.QObject):
-    _attrs = tuple()
+class IndexedModelItem(object):
+    """Used for model row data that can be accessed by column number or
+    attribute name.
+
+    This is useful in QAbstractTableModel data() and setData() methods which
+    are passed QModelIndex objects, and thus refer to columns and rows by
+    index values.
+
+    Example:
+        >>> class Foo(IndexedModelItem):
+        >>>     _attrs = ("foo", "bar")
+        >>>
+        >>> f = Foo(foo=True, bar=False)
+        >>> print f[0]
+        True
+        >>> print f.foo
+        True
+        >>> print f[1]
+        False
+        >>> print f.bar
+        False
+    """
+
+    _attrs = tuple()  # Index-accessible attributes
 
     def __init__(self, **kwargs):
         super(IndexedModelItem, self).__init__()
 
         for attr in self._attrs:
-            setattr(self, attr, None)
+            setattr(self, attr, kwargs.get(attr))
 
-        for attr, value in kwargs.iteritems():
-            setattr(self, attr, value)
+    def __getitem__(self, index):
+        """Return the value for the `index`.
 
-    def __getitem__(self, item):
-        index = int(item)
+        Args:
+            index: A integer index.
+
+        Returns:
+            The value associated with the index.
+
+        Raises:
+            TypeError: If `index` cannot be translated to an int.
+            ValueError: If `index` cannot be translated to an int.
+        """
+        index = int(index)
         attr  = self._attrs[index]
         return getattr(self, attr)
 
-    def __setitem__(self, key, value):
-        index = int(key)
+    def __setitem__(self, index, value):
+        """Set the `value` for the `index`.
+
+        Args:
+            index: An integer index.
+            value: A value.
+
+        Returns:
+            The value associated with the index.
+
+        Raises:
+            TypeError: If `index` cannot be translated to an int.
+            ValueError: If `index` cannot be translated to an int.
+        """
+        index = int(index)
         attr  = self._attrs[index]
         setattr(self, attr, value)
 
 
 class BestPracticeResultsTableItem(IndexedModelItem):
+    """Used for BestPracticeResultsTableModel entries."""
     _attrs = ("title", "line", "tag", "id", "idref", "message")
 
 
-class ValidateTableItem(IndexedModelItem):
+class ValidateTableItem(IndexedModelItem, QtCore.QObject):
+    """Used for ValidationTableModel entries.
+
+    Signals:
+        SIGNAL_RESULTS_UPDATED (str): Emitted when results have been updated.
+    """
     _attrs = ("filename", "stix_version", "validate_best_practices",
               "validate_stix_profile", "results")
 
     SIGNAL_RESULTS_UPDATED = QtCore.pyqtSignal(str)
 
-    def __init__(self):
-        super(ValidateTableItem, self).__init__(
+    def __init__(self, parent=None):
+        QtCore.QObject.__init__(self, parent)
+
+        IndexedModelItem.__init__(
+            self,
             filename=None,
             stix_version=None,
             validate_stix_profile=settings.VALIDATE_STIX_PROFILE,
@@ -98,22 +156,54 @@ class ValidateTableItem(IndexedModelItem):
         self.__key = str(id(self))
 
     def key(self):
+        """Return a key for this item. This is the str(id(self)).
+
+        This can be used for lookup within a table model.
+
+        Note:
+            Initially this returned ``id(self)`` but was changed due to integer
+            overflow issues that can occur between 64bit Python and Qt when
+            emitting integer data.
+
+            I could have gotten around this by defining my signals as
+            ``pyqtSignal('long long')`` but found that out after using
+            ``str`` everywhere.
+        """
         return self.__key
 
     def notify(self):
+        """Notify observers that the results have changed.
+
+        Emits:
+            SIGNAL_RESULTS_UPDATED (str): The key() of the item that has been
+            updated.
+        """
         key = self.key()
         LOG.debug("Sending id(self): %s", key)
         self.SIGNAL_RESULTS_UPDATED.emit(key)
 
     @classmethod
     def from_file(cls, fn):
+        """Return a ValidateTableItem instance for the input filename.
+
+        Args:
+            fn: A filename.
+
+        Returns:
+            A ValidateTableItem object.
+        """
         item = cls()
         item.filename = os.path.abspath(fn)
         item.stix_version = utils.stix_version(fn)
+
         return item
 
 
 class ValidationResults(object):
+    """Holds validation results.
+
+    This is used by ValidationTableItem for storing validation results.
+    """
     __slots__ = ("xml", "best_practices", "profile")
 
     def __init__(self):
@@ -123,30 +213,35 @@ class ValidationResults(object):
 
 
 class ValidationResultsTableModel(QtCore.QAbstractTableModel):
+    """Table model for storing XML and Profile validation errors.
+
+    The underlying data is a list of stix-validator
+    XmlValidationError amd ProfileValidationError objects.
+    """
+
     COLUMNS = ("Line Number", "Error")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
-    class NoError:
-        line    = "N/A"
-        message = "No Errors"
-
     def __init__(self, parent):
         super(ValidationResultsTableModel, self).__init__(parent)
-        self._data = [self.NoError]
+        self._data = []
 
     def update(self, results):
+        """Set the model data to the errors found on `results`.
+
+        If `results` is None, clear the model data.
+        """
         self.beginResetModel()
 
         if results is None:
-            self._data = [self.NoError]
-        elif not results.errors:
-            self._data = [self.NoError]
+            self._data = []
         else:
             self._data = results.errors
 
         self.endResetModel()
 
     def clear(self):
+        """Reset the model data."""
         self.update(None)
 
     def headerData(self, column, orientation, role=None):
@@ -161,6 +256,7 @@ class ValidationResultsTableModel(QtCore.QAbstractTableModel):
         return None
 
     def _get_text(self, index):
+        """Return the text to display for the input QModelIndex `index`."""
         row    = index.row()
         col = index.column()
         error = self._data[row]
@@ -187,6 +283,11 @@ class ValidationResultsTableModel(QtCore.QAbstractTableModel):
 
 
 class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
+    """Table model for storing STIX Best Practice warnings.
+
+    The underlying data is a list of stix-validator BestPracticeWarning objects.
+    """
+
     COLUMNS = ("Title", "Line", "Tag", "@id", "@idref", "Error")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
 
@@ -195,6 +296,14 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
         self._data = []
 
     def _parse_results(self, results):
+        """Parse the results and set the internal data.
+
+        Args:
+            results: A stix-validator BestPracticeResults object.
+
+        Returns:
+            A list of BestPracticeTableItem objects.
+        """
         data = []
 
         for collection in sorted(results, key=lambda x: x.name):
@@ -209,6 +318,11 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
         return data
 
     def update(self, results):
+        """Parse the `results` and populate the model.
+
+        Args:
+            results: A BestPracticeResults object.
+        """
         self.beginResetModel()
 
         if results is None:
@@ -221,6 +335,7 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
         self.endResetModel()
 
     def clear(self):
+        """Clear the model data."""
         self.update(None)
 
     def rowCount(self, index=None):
@@ -252,6 +367,8 @@ class BestPracticeResultsTableModel(QtCore.QAbstractTableModel):
 
 
 class ValidateTableModel(QtCore.QAbstractTableModel):
+    """A table model that holds information about items to be validated."""
+
     COLUMNS = ("Filename", "STIX Version", "Best Practices Validate",
                "STIX Profile Validate", "Results")
     COLUMN_INDEXES = dict(enumerate(COLUMNS))
@@ -259,21 +376,29 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
     def __init__(self, parent):
         super(ValidateTableModel, self).__init__(parent)
         self._data = []
-        self.update([])
 
     def clear(self):
-        self.beginResetModel()
-        self._data = []
-        self.endResetModel()
+        """Clears the model data."""
+        self.update(None)
 
     def _get_item(self, fn):
+        """Build and return a ValidateTableItem for the filename `fn`.
+
+        Wire up the ValidateTableItem signals so that the model is notified
+        of result updates.
+        """
         item = ValidateTableItem.from_file(fn)
-        item.SIGNAL_RESULTS_UPDATED.connect(self.update_results)
+        item.SIGNAL_RESULTS_UPDATED.connect(self._notify_updated)
         return item
 
     def update(self, files):
         self.beginResetModel()
-        self._data = [self._get_item(fn) for fn in files]
+
+        if files is None:
+            self._data = []
+        else:
+            self._data = [self._get_item(fn) for fn in files]
+
         self.endResetModel()
 
     def add(self, file):
@@ -289,6 +414,18 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return len(self.COLUMNS)
 
     def _color(self, index, key):
+        """Return the background/foreground color for the input `index`
+        and `key`.
+
+        If the item at `index` has validation results, return the associated
+        color. If no results are set, return None (system defaults will be
+        used).
+
+        Args:
+            index: A QModelIndex object.
+            key: The VALIDATION_COLORS key (either 'bg' or 'fg').
+
+        """
         row  = index.row()
         col  = index.column()
         item = self._data[row]
@@ -320,9 +457,19 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             return VALIDATION_COLORS["xml"][is_valid][key]
 
     def _bgcolor(self, index):
+        """Return the background color to paint for the item at `index`.
+
+        Args
+            index: A QModelIndex object.
+        """
         return self._color(index, "bg")
 
     def _fgcolor(self, index):
+        """Return the foreground color to paint for the item at `index`.
+
+        Args
+            index: A QModelIndex object.
+        """
         return self._color(index, "fg")
 
     def data(self, index, role=None):
@@ -346,6 +493,12 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return None
 
     def flags(self, index):
+        """Allow the validation type columns to be editable so users can
+        enable/disable validation types.
+
+        For example, if a user selects the STIX Profile Validate column, they
+        can enable or disable this type of validation.
+        """
         flags = super(ValidateTableModel, self).flags(index)
 
         if not index.isValid():
@@ -361,6 +514,7 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return flags
 
     def _handle_edit_role(self, index, value):
+        """Handle the user editing a cell value."""
         row   = index.row()
         col   = index.column()
         value = utils.str2bool(value.toPyObject())
@@ -386,6 +540,12 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return False
 
     def remove_item(self, item):
+        """Remove the `item` from the model if it is currently held by the
+        model.
+
+        Args:
+            item: A ValidateTableItem item.
+        """
         if hasattr(item, "toPyObject"):
             item = item.toPyObject()
 
@@ -396,15 +556,23 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
             self.removeRow(row)
 
     def remove_items(self, items):
+        """Remove the `items` from the model if it they are currently held by
+        the model.
+
+        Args:
+            items: A list of ValidateTableItem items.
+        """
         for item in items:
             self.remove_item(item)
 
     def removeRow(self, row, parent=QtCore.QModelIndex()):
+        """Remove the item found at the `row` from the model."""
         self.beginRemoveRows(parent, row, row)
         del self._data[row]
         self.endRemoveRows()
 
     def removeRows(self, row, count, parent=QtCore.QModelIndex()):
+        """Remove the items starting at `row` and ending at `row` + count."""
         self.beginRemoveRows(parent, row, row + count)
 
         for idx in xrange(row, row + count):
@@ -424,6 +592,7 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         return None
 
     def items(self):
+        """Return the model items."""
         return self._data
 
     def reset_results(self):
@@ -444,9 +613,9 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         self.dataChanged.emit(start, end)
 
     @QtCore.pyqtSlot(str)
-    def update_results(self, itemid):
-        """Let observers know that the results have changed for the item
-        with the id() equal to `itemid`.
+    def _notify_updated(self, itemid):
+        """Notify the view that the row for the given `itemid` needs to be
+        redrawn since its results have changed..
         """
         items = self._data
         idx   = next(x for x, item in enumerate(items) if item.key() == itemid)
@@ -455,36 +624,31 @@ class ValidateTableModel(QtCore.QAbstractTableModel):
         self.dataChanged.emit(start, end)
 
     def enable_best_practices(self, enabled=True):
+        """Enable/Disable best practices validation for all items in the
+        model.
+        """
         for item in self._data:
             item.validate_best_practices = enabled
 
         self.reset_results()
 
     def enable_profile(self, enabled=True):
+        """Enable/Disable profile validation for all items in the model."""
         for item in self._data:
             item.validate_stix_profile = enabled
 
         self.reset_results()
 
     def lookup(self, itemid):
-        return next(item for item in self._data if item.key() == itemid)
+        """Return the model item for the given `itemid`.
 
+        Args:
+            itemid: A ValidateTableItem key() value.
 
-class BoolListModel(QtCore.QAbstractListModel):
-    def __init__(self, parent=None):
-        super(BoolListModel, self).__init__(parent)
-        self._data = (True, False)
-
-    def rowCount(self, index=None):
-        return 2
-
-    def data(self, index, role=None):
-        if not index.isValid():
-            return None
-
-        row = index.row()
-
-        if role == Qt.DisplayRole:
-            return self._data[row]
-
-        return None
+        Raises:
+            KeyError: If no model items have a key() which matches `itemid`.
+        """
+        try:
+            return next(item for item in self._data if item.key() == itemid)
+        except StopIteration:
+            raise KeyError("Unknown itemid: %s" % itemid)
