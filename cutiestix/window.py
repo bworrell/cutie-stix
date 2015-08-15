@@ -15,38 +15,49 @@ from . import utils
 from .ui.window import Ui_MainWindow
 
 
+# Module-level logger
 LOG = logging.getLogger(__name__)
 
+# Main window dimensions
 WIDTH  = 1280
 HEIGHT = 768
 
+# Main window stacked widget indexes
 INDEX_ADD_FILES  = 0
 INDEX_VIEW_FILES = 1
 
+# Used for Open/Save file dialogs
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
+    """The main window for the application."""
+
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+
+        # Dictionary of result types (xml, profile, ...) to QWidgets.
+        # We use this for auto-selecting an already-open widget when a
+        # user requests validation results.
         self._result_tabs = {}
 
-        self.setupUi(self)
+        # Initialize all the ui components
         self._populate()
+
+        # Connect the ui component signals.
         self._connect_ui()
 
-        # Set the size of the window
-        self.resize(WIDTH, HEIGHT)
-
-        # Center the UI on the screen
-        widgets.center(self)
-
     def _populate(self):
+        """Initializes and populates ui components found in this window."""
+        self.setupUi(self)
+
+        # Create the results tabs but don't show them yet.
+        self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
+        self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
+        self._result_tabs['best_practices'] = widgets.ResultsWidget(models.BestPracticeResultsTableModel)
+
         # Remove the unwanted, empty tab
         self.tab_widget.removeTab(1)
-
-        # Prevent closing the first tab
-        # self.tab_widget.disable_remove(0)
 
         # Add a permanent status bar
         self.status = QtGui.QLabel()
@@ -56,7 +67,15 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # widget.
         self._handle_file_table_model_changed()
 
+        # Set the correct dimensions
+        self.resize(WIDTH, HEIGHT)
+
+        # Center the UI on the screen
+        widgets.center(self)
+
     def _connect_ui(self):
+        """Connect the ui component signals."""
+
         # Buttons in the main window
         self.btn_validate.clicked.connect(self._handle_btn_validate_clicked)
         self.btn_clear.clicked.connect(self._handle_btn_clear_clicked)
@@ -83,7 +102,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         table.SIGNAL_BEST_PRACTICES_RESULTS_REQUESTED.connect(self._handle_best_practices_results_requested)
         table.SIGNAL_FILES_ADDED.connect(self._add_files)
 
-        # Main Options
+        # Validation options
         bpstate = self.check_best_practices.stateChanged
         bpstate.connect(self._handle_check_best_practices_state_changed)
         exschema = self.check_external_schemas.stateChanged
@@ -94,15 +113,10 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
         # Add Files landing screen.
         self.page_add_files.SIGNAL_FILES_ADDED.connect(self._add_files)
 
-    def _reset_result_tabs(self):
+    def _remove_results_tabs(self):
         for tab in self._result_tabs.itervalues():
             idx = self.tab_widget.indexOf(tab)
             self.tab_widget.removeTab(idx)
-
-        # Used for displaying results
-        self._result_tabs['xml'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
-        self._result_tabs['profile'] = widgets.ResultsWidget(models.ValidationResultsTableModel)
-        self._result_tabs['best_practices'] = widgets.ResultsWidget(models.BestPracticeResultsTableModel)
 
     @QtCore.pyqtSlot()
     def _show_about(self):
@@ -116,7 +130,7 @@ class MainWindow(Ui_MainWindow, QtGui.QMainWindow):
 
         if size == 0:
             self.stacked_main.setCurrentIndex(INDEX_ADD_FILES)
-            self._reset_result_tabs()
+            self._remove_results_tabs()
             self.update_status("No Files Added.")
         else:
             self.stacked_main.setCurrentIndex(INDEX_VIEW_FILES)

@@ -159,10 +159,10 @@ class AboutDialog(Ui_AboutDialog, QtGui.QDialog):
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
-        self._connect_signals()
         self._populate()
+        self._connect_ui()
 
-    def _connect_signals(self):
+    def _connect_ui(self):
         """Connect ui widget signals to handlers."""
         self.btn_close.clicked.connect(self.done)
 
@@ -365,8 +365,7 @@ class ResultsWidget(Ui_ResultsWidget, QtGui.QWidget):
     """A general-purpose Widget for displaying validation results.
 
     Args:
-        model: An instance of models.ValidationResultsTableModel or
-            models.BestPracticeResultsTableModel.
+        model: The underlying table model class.
         parent: A QObject parent for this widget.
     """
 
@@ -390,7 +389,7 @@ class ResultsWidget(Ui_ResultsWidget, QtGui.QWidget):
         """Sets the source model for this table view.
 
         Args:
-            model: An instance of models.ValidationResultsTableModel or
+            model: A table model class: models.ValidationResultsTableModel or
                 models.BestPracticeResultsTableModel.
         """
         table = self.table_results
@@ -489,5 +488,3 @@ class XsltTransformDialog(_TransformDialog):
     """
     def _worker_thread_slot(self, worker):
         return worker.to_xslt
-
-
