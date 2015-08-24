@@ -19,6 +19,15 @@ The **cutiestix** application has been developed and tested using the following:
 Python builds on OSX and 64bit Qt/PyQt. Your best bet is to stick with 32bit 
 everything.
 
+## Repository Layout
+* `cutiestix/`: Top-evel Python package.
+* `designer/`: Qt Designer files.
+* `screenshots/`: Screenshots of **cutiestix**.
+* `scripts/`: **cutiestix** executable scripts.
+* `setup.py`: Installation script.
+* `LICENSE`: Terms of use.
+* `README.md`: The README (this file).
+
 ## Look and Feel
 The following are screenshots of **cutiestix**.
 
