@@ -40,7 +40,8 @@ $ python scripts/run-cutiestix.py
 * `README.md`: The README (this file).
 
 ## Look and Feel
-The following are screenshots of **cutiestix**.
+The following are screenshots of **cutiestix**. A friend of mine said that 
+the color scheme made his eyes bleed so get a towel ready for your peepers.
 
 ### Main Window
 The following is a screenshot of the **cutiestix** main window during a batch
