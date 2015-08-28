@@ -10,14 +10,25 @@ formula: Qt + STIX = "cutiestix".
 ## Requirements
 The **cutiestix** application has been developed and tested using the following:
 
-* Python 2.7
-* Qt 4.8.*
-* PyQt 4.8.*
-* stix-validator 2.4.0
+* [Python 2.7](http://www.python.org)
+* [PyQt 4.8.*](https://www.riverbankcomputing.com/software/pyqt/download)
+* [stix-validator 2.4.0](https://github.com/STIXProject/stix-validator)
 
 **Note:** I have seen some integer overflow issues between universal (32/64bit)
 Python builds on OSX and 64bit Qt/PyQt. Your best bet is to stick with 32bit 
 everything.
+
+## Installation and Usage
+To run **cutiestix** just install the requirements listed above. After 
+installation, just run the `run-cutiestix.py` script found in the `scripts/`
+folder.
+
+```
+$ <install PyQt from the link above>
+$ cd path/to/cutiestix/repo
+$ python setup.py install
+$ python scripts/run-cutiestix.py
+```
 
 ## Repository Layout
 * `cutiestix/`: Top-evel Python package.
