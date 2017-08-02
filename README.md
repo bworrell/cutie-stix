@@ -57,7 +57,7 @@ Users can view XML, STIX Best Practices, and STIX Profile validation error repor
 
 Tabbed interface to separate validation reports.  
 
-![Tabs] (https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/tabs.png)
+![Tabs](https://raw.githubusercontent.com/bworrell/cutiestix/master/screenshots/tabs.png)
 
 ### STIX Profile Transformation
 Users can transform STIX Profiles (Excel documents) into XSLT or Schematron 
